@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "shareDone.app"
-               BlueprintName = "shareDone"
-               ReferencedContainer = "container:shareDone.xcodeproj">
+               BuildableName = "ShareDone.app"
+               BlueprintName = "ShareDone"
+               ReferencedContainer = "container:ShareDone.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "shareDoneTests.xctest"
-               BlueprintName = "shareDoneTests"
-               ReferencedContainer = "container:shareDone.xcodeproj">
+               BuildableName = "ShareDoneTests.xctest"
+               BlueprintName = "ShareDoneTests"
+               ReferencedContainer = "container:ShareDone.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "shareDone.app"
-            BlueprintName = "shareDone"
-            ReferencedContainer = "container:shareDone.xcodeproj">
+            BuildableName = "ShareDone.app"
+            BlueprintName = "ShareDone"
+            ReferencedContainer = "container:ShareDone.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "shareDone.app"
-            BlueprintName = "shareDone"
-            ReferencedContainer = "container:shareDone.xcodeproj">
+            BuildableName = "ShareDone.app"
+            BlueprintName = "ShareDone"
+            ReferencedContainer = "container:ShareDone.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
