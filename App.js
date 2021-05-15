@@ -16,6 +16,9 @@ const App = () => {
   let [showScan, setShowScan] = useState(false);
   let [showBlind, setShowBlind] = useState(false);
 
+  const scan=()=>{
+
+  }
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.appTitle}>SendDone</Text>

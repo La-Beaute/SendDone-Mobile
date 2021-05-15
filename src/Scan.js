@@ -13,7 +13,9 @@ import {
 const Scan = ({setShowBlind, setShowScan}) => {
   return (
     <SafeAreaView style={styles.scan}>
-      <Text>Hello</Text>
+      <ScrollView >
+
+      </ScrollView>
       <Button title='OK' onPress={()=>{
         setShowScan(false);
         setShowBlind(false);
