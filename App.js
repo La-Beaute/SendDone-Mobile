@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {Picker} from '@react-native-picker/picker';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,17 +12,39 @@ import {
 } from 'react-native';
 import Scan from './src/Scan';
 import Blind from './src/Blind';
+import * as Network from './src/Network';
 
 const App = () => {
   let [showScan, setShowScan] = useState(false);
   let [showBlind, setShowBlind] = useState(false);
+  let [networks, setNetworks]= useState([]);
+  let [myIp, setMyIp] = useState('');
 
-  const scan=()=>{
+  const listNetworks=networks.map((value)=>{
+    return <Picker.Item label={'Network: ' + value.name+' | '+value.ip} value={value.ip} key={value.ip} />
+  });
 
-  }
+  useEffect(()=>{
+    if(!myIp){
+      setNetworks(()=>Network.getMyNetworks());
+    }
+    console.log(networks);
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.app}>
       <Text style={styles.appTitle}>SendDone</Text>
+      <View style={styles.network}>
+        <Picker 
+          selectedValue={myIp}
+          onValueChange={(value, index)=>{
+            console.log(value);
+            setMyIp(value);
+          }}
+        >
+          {listNetworks}
+        </Picker>
+      </View>
       <View style={styles.card}>
         <ScrollView>
           <Text style={styles.sampleText}>Move your files in seconds in SendDone</Text>
@@ -30,6 +53,7 @@ const App = () => {
       <View style={styles.buttons}>
         <Button title='scan'
           onPress={() => { 
+            getMyNetworks();
             setShowBlind(true);
             setShowScan(true); 
           }}
@@ -40,24 +64,21 @@ const App = () => {
       </View>
       { showBlind && <Blind />}
       { showScan && <Scan setShowBlind={setShowBlind} setShowScan={setShowScan} />}
-    </SafeAreaView>
+    </View>
   );
 };
 
-// const StyledContainer = glamorous.view((props, theme) => ({
-//   height: 823,
-//   width: 411,
-//   backgroundColor: '#ffffff'
-// },
-
 const styles = StyleSheet.create({
-
-  container: {
+  app: {
     flex: 1,
     backgroundColor: '#fff', //#feb93a
     position: 'relative'
   },
-
+  network:{
+    borderWidth:2,
+    borderRadius: 5,
+    borderStyle: 'solid',
+  },
   buttons: {
     width: '100%',
     height: '10%',

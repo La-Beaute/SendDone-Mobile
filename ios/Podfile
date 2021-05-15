@@ -12,6 +12,8 @@ target 'SendDone' do
     :hermes_enabled => false
   )
 
+  pod 'RNOS', :path => '../node_modules/react-native-os'
+
   target 'SendDoneTests' do
     inherit! :complete
     # Pods for testing
