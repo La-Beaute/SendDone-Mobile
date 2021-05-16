@@ -15,20 +15,21 @@ import Blind from './src/Blind';
 import * as Network from './src/Network';
 
 const App = () => {
-  let [showScan, setShowScan] = useState(false);
-  let [showBlind, setShowBlind] = useState(false);
-  let [networks, setNetworks]= useState([]);
-  let [myIp, setMyIp] = useState('');
+  const [showScan, setShowScan] = useState(false);
+  const [showBlind, setShowBlind] = useState(false);
+  const [networks, setNetworks]= useState([]);
+  const [myIp, setMyIp] = useState('');
+  const [netmask, setNetmask] = useState('');
+  const [sendIp, setSendIp] = useState('');
 
   const listNetworks=networks.map((value)=>{
-    return <Picker.Item label={'Network: ' + value.name+' | '+value.ip} value={value.ip} key={value.ip} />
+    return <Picker.Item label={'Network: ' + value.name+' | '+value.ip} value={value.ip+'/'+value.netmask} key={value.ip} />
   });
 
   useEffect(()=>{
     if(!myIp){
       setNetworks(()=>Network.getMyNetworks());
     }
-    console.log(networks);
   }, []);
 
   return (
@@ -38,8 +39,9 @@ const App = () => {
         <Picker 
           selectedValue={myIp}
           onValueChange={(value, index)=>{
-            console.log(value);
-            setMyIp(value);
+            const [ip, netmask]=value.split('/');
+            setMyIp(ip);
+            setNetmask(netmask);
           }}
         >
           {listNetworks}
@@ -53,7 +55,6 @@ const App = () => {
       <View style={styles.buttons}>
         <Button title='scan'
           onPress={() => { 
-            getMyNetworks();
             setShowBlind(true);
             setShowScan(true); 
           }}
@@ -63,7 +64,12 @@ const App = () => {
         />
       </View>
       { showBlind && <Blind />}
-      { showScan && <Scan setShowBlind={setShowBlind} setShowScan={setShowScan} />}
+      { showScan && <Scan 
+      myIp={myIp}
+      netmask={netmask}
+      setShowBlind={setShowBlind} 
+      setShowScan={setShowScan} 
+      scan={Network.scan}/>}
     </View>
   );
 };

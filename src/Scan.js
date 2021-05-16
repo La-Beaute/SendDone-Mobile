@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,20 +7,51 @@ import {
   Text,
   ScrollView,
   Button,
-  Alert
+  Alert,
+  FlatList
 } from 'react-native';
 
-const Scan = ({setShowBlind, setShowScan}) => {
+const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan}) => {
+  const [deviceList, setDeviceList]=useState([]);
+  const renderDevice=({item})=>{
+    console.log(item);
+    return (
+      <View style={styles.device}>
+        <View style={styles.deviceOs}>
+          <Text>
+            {item.os}
+          </Text>
+        </View>
+        <View style={styles.deviceBox}>
+          <Text>
+            {item.id}
+          </Text>
+          <Text>
+            {'IP: ' + item.ip + ' | Version: ' + item.version}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+  useEffect(()=>{
+    // TODO Add my device ID.
+    scan(myIp, netmask, '123', (deviceIp, deviceVersion, deviceId, deviceOs)=>{
+      console.log('found', deviceIp);
+      setDeviceList(()=>
+        [...deviceList, {ip:deviceIp, vesion:deviceVersion, id:deviceId, os:deviceOs}]);
+    });
+  }, []);
   return (
-    <SafeAreaView style={styles.scan}>
-      <ScrollView >
-
-      </ScrollView>
+    <View style={styles.scan}>
+      <FlatList 
+        data={deviceList} 
+        renderItem={renderDevice}>
+      </FlatList>
       <Button title='OK' onPress={()=>{
         setShowScan(false);
         setShowBlind(false);
       }} />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -41,8 +72,7 @@ const styles = StyleSheet.create({
     top: '5%',
     backgroundColor: '#888888'
   },
- 
-  buttons:{
+  buttons: {
     width: 100,
     height: 10,
     flex: 1,
@@ -52,32 +82,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderStyle: 'solid'
   },
-
-  appTitle: {
-      //fontFamily: "Roboto",
-      fontSize: 30,
-      fontWeight: "bold",
-      fontStyle: "normal",
-      textAlign: "center",
-      color: "#000000",
-      marginTop: 10,
-      marginBottom : 10, 
+  device: {
+    width: '100%',
+    flex: 1,
+    alignItems: 'flex-start'
   },
-
-  sampleText:{
-    
-      width: 316,
-      height: 62,
-      //fontFamily: "Roboto",
-      fontSize: 24,
-      fontWeight: "bold",
-      fontStyle: "normal",
-      letterSpacing: 0,
-      textAlign: "center",
-      color: "#aba7a7",
-      marginTop: 300,
-      marginLeft : 40, 
+  deviceOs: {
+    width: '20%'
   },
+  deviceBox: {
+    flex: 1,
+    flexDirection: 'row'
+  }
 });
 
 export default Scan;

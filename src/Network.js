@@ -82,14 +82,12 @@ function _splitHeader(buf) {
 function scan(ip, netmask, myId, callback) {
   let currentIp = (_IpStringToNumber(ip) & _IpStringToNumber(netmask)) >>> 0;
   let broadcastIp = Math.min(_IpStringToNumber(_IpBroadcastIp(ip, netmask)), currentIp + MAX_SCAN);
+  console.log('scanning');
   while (broadcastIp > currentIp) {
     let thisIp = _IpNumberToString(currentIp);
-    if (thisIp !== ip) {
-      const socket = net.createConnection(PORT, thisIp);
+    if (thisIp === '192.168.0.2') {
+      const socket = net.createConnection({port: PORT, host: thisIp});
       let recvBuf = Buffer.from([]);
-      socket.setTimeout(2000, () => {
-        socket.end();
-      })
       socket.on('connect', () => {
         let header = {
           app: "SendDone",
@@ -112,7 +110,7 @@ function scan(ip, netmask, myId, callback) {
             let recvHeader = JSON.parse(ret.header);
             if (recvHeader && recvHeader.app === 'SendDone' && recvHeader.class === 'ok') {
               if (callback)
-                callback(socket.remoteAddress, recvHeader.version, recvHeader.id, recvHeader.os);
+                callback(thisIp, recvHeader.version, recvHeader.id, recvHeader.os);
             }
           } catch (err) {
             // Just close this malicious connection.
@@ -122,8 +120,9 @@ function scan(ip, netmask, myId, callback) {
           }
         }
       })
-      socket.on('error', () => {
+      socket.on('error', (err) => {
         // Do nothing.
+        console.log('failed to connect', err);
       });
       socket.on('close', () => {
         socket.end();
