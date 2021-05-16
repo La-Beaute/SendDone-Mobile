@@ -21,6 +21,7 @@ const App = () => {
   const [myIp, setMyIp] = useState('');
   const [netmask, setNetmask] = useState('');
   const [sendIp, setSendIp] = useState('');
+  const [sendId, setSendId] = useState('');
 
   const listNetworks=networks.map((value)=>{
     return <Picker.Item label={'Network: ' + value.name+' | '+value.ip} value={value.ip+'/'+value.netmask} key={value.ip} />
@@ -49,7 +50,12 @@ const App = () => {
       </View>
       <View style={styles.card}>
         <ScrollView>
-          <Text style={styles.sampleText}>Move your files in seconds in SendDone</Text>
+          <Text style={styles.sampleText}>
+            {sendIp ? 
+            `You have selected ${sendId}(${sendIp})` :
+            'Select the sender by scanning.'
+            }
+          </Text>
         </ScrollView>
       </View>
       <View style={styles.buttons}>
@@ -65,11 +71,15 @@ const App = () => {
       </View>
       { showBlind && <Blind />}
       { showScan && <Scan 
-      myIp={myIp}
-      netmask={netmask}
-      setShowBlind={setShowBlind} 
-      setShowScan={setShowScan} 
-      scan={Network.scan}/>}
+        myIp={myIp}
+        netmask={netmask}
+        setShowBlind={setShowBlind} 
+        setShowScan={setShowScan} 
+        scan={Network.scan}
+        sendIp={sendIp}
+        setSendIp={setSendIp}
+        setSendId={setSendId}
+      />}
     </View>
   );
 };
@@ -77,25 +87,9 @@ const App = () => {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
-    backgroundColor: '#fff', //#feb93a
+    backgroundColor: '#fff',
     position: 'relative'
   },
-  network:{
-    borderWidth:2,
-    borderRadius: 5,
-    borderStyle: 'solid',
-  },
-  buttons: {
-    width: '100%',
-    height: '10%',
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderRadius: 5,
-    borderStyle: 'solid'
-  },
-
   appTitle: {
     //fontFamily: "Roboto",
     fontSize: 30,
@@ -106,9 +100,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-
+  network: {
+    borderWidth:2,
+    borderRadius: 5,
+    borderStyle: 'solid',
+  },
+  card: {
+    flex: 4
+  },
+  buttons: {
+    width: '100%',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderWidth: 2,
+    borderRadius: 5,
+    borderStyle: 'solid'
+  },
   sampleText: {
-
     width: 316,
     height: 62,
     //fontFamily: "Roboto",

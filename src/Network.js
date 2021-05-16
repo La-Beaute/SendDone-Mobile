@@ -28,6 +28,7 @@ const STATE = {
 };
 const OS = os.platform();
 let maxScanIp=0;
+let scanIndex=0;
 
 /**
  * Return an array of dictionary each looks like: { name, ip, netmask }.
@@ -85,14 +86,17 @@ function scan(ip, netmask, myId, callback) {
   let currentIp = (_IpStringToNumber(ip) & _IpStringToNumber(netmask)) >>> 0;
   let broadcastIp = Math.min(_IpStringToNumber(_IpBroadcastIp(ip, netmask)), currentIp + MAX_SCAN);
   maxScanIp=0;
-  _scan(currentIp, ip, broadcastIp, myId, callback);
+  ++scanIndex;
+  _scan(currentIp, ip, broadcastIp, myId, scanIndex, callback);
 }
-function _scan(currentIp, myIp, broadcastIp, myId, callback){
+function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
   if(broadcastIp<=currentIp)
     return;
   if(currentIp==myIp)
-    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
   if(maxScanIp>=currentIp)
+    return;
+  if(scanIndex!==thisIndex)
     return;
   maxScanIp=currentIp;
   let thisIp = _IpNumberToString(currentIp);
@@ -132,16 +136,15 @@ function _scan(currentIp, myIp, broadcastIp, myId, callback){
   })
   socket.on('error', (err) => {
     // Do nothing.
-    console.log(thisIp, err);
-    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
   });
   socket.on('close', () => {
     socket.end();
-    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
   });
   socket.on('timeout', ()=>{
     socket.end();
-    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
   });
 }
 

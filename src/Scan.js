@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  TextInput,
   View,
   Text,
-  ScrollView,
   Button,
-  Alert,
+  TouchableOpacity,
   FlatList
 } from 'react-native';
 
-const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan}) => {
+const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp, setSendId}) => {
   const [deviceList, setDeviceList]=useState([]);
+
   const renderDevice=({item})=>{
-    console.log(item);
     return (
-      <View style={styles.device}>
+      <TouchableOpacity 
+        style={item.ip===sendIp ? styles.deviceSelected : styles.device}
+        onPress={()=>{ setSendIp(item.ip); setSendId(item.id); }}
+      >
         <View style={styles.deviceOs}>
           <Text>
             {item.os}
@@ -30,22 +30,24 @@ const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan}) => {
             {'IP: ' + item.ip + ' | Version: ' + item.version}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
   useEffect(()=>{
     // TODO Add my device ID.
+    setDeviceList(()=>[]);
     scan(myIp, netmask, '123', (deviceIp, deviceVersion, deviceId, deviceOs)=>{
-      console.log('found', deviceIp);
       setDeviceList(()=>
-        [...deviceList, {ip:deviceIp, vesion:deviceVersion, id:deviceId, os:deviceOs}]);
+        [...deviceList, {ip:deviceIp, version:deviceVersion, id:deviceId, os:deviceOs}]);
     });
   }, []);
   return (
     <View style={styles.scan}>
       <FlatList 
         data={deviceList} 
-        renderItem={renderDevice}>
+        renderItem={renderDevice}
+        keyExtractor={(item, index)=>item.ip}
+      >
       </FlatList>
       <Button title='OK' onPress={()=>{
         setShowScan(false);
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     height: '90%',
     alignSelf: 'center',
     top: '5%',
-    backgroundColor: '#888888'
+    backgroundColor: '#ffffff'
   },
   buttons: {
     width: 100,
@@ -85,14 +87,30 @@ const styles = StyleSheet.create({
   device: {
     width: '100%',
     flex: 1,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    padding: 10,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    backgroundColor: '#ffffff'
   },
+  deviceSelected: {
+    width: '100%',
+    flex: 1,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    padding: 10,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    backgroundColor: '#afafaf'
+  },
+  
   deviceOs: {
-    width: '20%'
+    width: '20%',
   },
   deviceBox: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'column'
   }
 });
 
