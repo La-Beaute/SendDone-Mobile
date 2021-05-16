@@ -27,6 +27,8 @@ const STATE = {
   RECEIVER_END: 'RECEIVER_END'
 };
 const OS = os.platform();
+let maxScanIp=0;
+
 /**
  * Return an array of dictionary each looks like: { name, ip, netmask }.
  * @returns {Array.<{name:String, ip:String, netmask:String}>} Array of networks.
@@ -82,54 +84,65 @@ function _splitHeader(buf) {
 function scan(ip, netmask, myId, callback) {
   let currentIp = (_IpStringToNumber(ip) & _IpStringToNumber(netmask)) >>> 0;
   let broadcastIp = Math.min(_IpStringToNumber(_IpBroadcastIp(ip, netmask)), currentIp + MAX_SCAN);
-  console.log('scanning');
-  while (broadcastIp > currentIp) {
-    let thisIp = _IpNumberToString(currentIp);
-    if (thisIp === '192.168.0.2') {
-      const socket = net.createConnection({port: PORT, host: thisIp});
-      let recvBuf = Buffer.from([]);
-      socket.on('connect', () => {
-        let header = {
-          app: "SendDone",
-          version: VERSION,
-          class: "scan",
-          id: myId,
-          os: OS
-        };
-        socket.write(JSON.stringify(header) + HEADER_END);
-      });
-      socket.on('data', (data) => {
-        recvBuf = Buffer.concat([recvBuf, data]);
-        if (recvBuf.length >= 100000) {
-          // Too long buffer. Close this malicious connection.
-          socket.end();
-        }
-        const ret = _splitHeader(recvBuf);
-        if (ret) {
-          try {
-            let recvHeader = JSON.parse(ret.header);
-            if (recvHeader && recvHeader.app === 'SendDone' && recvHeader.class === 'ok') {
-              if (callback)
-                callback(thisIp, recvHeader.version, recvHeader.id, recvHeader.os);
-            }
-          } catch (err) {
-            // Just close this malicious connection.
-            socket.end();
-          } finally {
-            socket.end();
-          }
-        }
-      })
-      socket.on('error', (err) => {
-        // Do nothing.
-        console.log('failed to connect', err);
-      });
-      socket.on('close', () => {
-        socket.end();
-      });
+  maxScanIp=0;
+  _scan(currentIp, ip, broadcastIp, myId, callback);
+}
+function _scan(currentIp, myIp, broadcastIp, myId, callback){
+  if(broadcastIp<=currentIp)
+    return;
+  if(currentIp==myIp)
+    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+  if(maxScanIp>=currentIp)
+    return;
+  maxScanIp=currentIp;
+  let thisIp = _IpNumberToString(currentIp);
+  const socket = net.createConnection({port: PORT, host: thisIp, timeout: 1000});
+  let recvBuf = Buffer.from([]);
+  socket.on('connect', () => {
+    let header = {
+      app: "SendDone",
+      version: VERSION,
+      class: "scan",
+      id: myId,
+      os: OS
+    };
+    socket.write(JSON.stringify(header) + HEADER_END);
+  });
+  socket.on('data', (data) => {
+    recvBuf = Buffer.concat([recvBuf, data]);
+    if (recvBuf.length >= 100000) {
+      // Too long buffer. Close this malicious connection.
+      socket.end();
     }
-    currentIp++;
-  }
+    const ret = _splitHeader(recvBuf);
+    if (ret) {
+      try {
+        let recvHeader = JSON.parse(ret.header);
+        if (recvHeader && recvHeader.app === 'SendDone' && recvHeader.class === 'ok') {
+          if (callback)
+            callback(thisIp, recvHeader.version, recvHeader.id, recvHeader.os);
+        }
+      } catch (err) {
+        // Just close this malicious connection.
+        socket.end();
+      } finally {
+        socket.end();
+      }
+    }
+  })
+  socket.on('error', (err) => {
+    // Do nothing.
+    console.log(thisIp, err);
+    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+  });
+  socket.on('close', () => {
+    socket.end();
+    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+  });
+  socket.on('timeout', ()=>{
+    socket.end();
+    _scan(currentIp+1, myIp, broadcastIp, myId, callback);
+  });
 }
 
 /**
