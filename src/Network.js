@@ -90,10 +90,15 @@ function scan(ip, netmask, myId, callback) {
   _scan(currentIp, ip, broadcastIp, myId, scanIndex, callback);
 }
 function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
+  const callNext=()=>{
+    setTimeout(()=>{
+      _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
+    }, 0);
+  }
   if(broadcastIp<=currentIp)
     return;
   if(currentIp==myIp)
-    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
+    callNext();
   if(maxScanIp>=currentIp)
     return;
   if(scanIndex!==thisIndex)
@@ -135,16 +140,15 @@ function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
     }
   })
   socket.on('error', (err) => {
-    // Do nothing.
-    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
+    callNext();
   });
   socket.on('close', () => {
     socket.end();
-    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
+    callNext();
   });
   socket.on('timeout', ()=>{
     socket.end();
-    _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
+    callNext();
   });
 }
 
