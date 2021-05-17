@@ -11,7 +11,9 @@ import {
   Alert
 } from 'react-native';
 import Scan from './src/Scan';
+import ItemView from './src/ItemView';
 import Blind from './src/Blind';
+import TextButton from './src/TextButton';
 import * as Network from './src/Network';
 
 const App = () => {
@@ -35,39 +37,42 @@ const App = () => {
 
   return (
     <View style={styles.app}>
-      <Text style={styles.appTitle}>SendDone</Text>
-      <View style={styles.network}>
-        <Picker 
-          selectedValue={myIp}
-          onValueChange={(value, index)=>{
-            const [ip, netmask]=value.split('/');
-            setMyIp(ip);
-            setNetmask(netmask);
-          }}
-        >
-          {listNetworks}
-        </Picker>
+      <View style={styles.head}>
+        <Text style={styles.appTitle}>SendDone</Text>
+        <View style={styles.network}>
+          <Picker 
+            selectedValue={myIp}
+            onValueChange={(value, index)=>{
+              const [ip, netmask]=value.split('/');
+              setMyIp(ip);
+              setNetmask(netmask);
+            }}
+          >
+            {listNetworks}
+          </Picker>
+        </View>
       </View>
-      <View style={styles.card}>
-        <ScrollView>
-          <Text style={styles.sampleText}>
-            {sendIp ? 
-            `You have selected ${sendId}(${sendIp})` :
-            'Select the sender by scanning.'
-            }
-          </Text>
-        </ScrollView>
+      <View style={styles.body}>
+        <ItemView />
       </View>
-      <View style={styles.buttons}>
-        <Button title='scan'
-          onPress={() => { 
-            setShowBlind(true);
-            setShowScan(true); 
-          }}
-        />
-        <Button title='send'
-          onPress={() => { Alert.alert('send') }}
-        />
+      <View style={styles.foot}>
+        <Text style={styles.sampleText}>
+          {sendIp ? 
+          `You have selected ${sendId}(${sendIp})` :
+          'Select device by scanning.'
+          }
+        </Text>
+        <View style={styles.buttons}>
+          <TextButton title='scan'
+            onPress={() => { 
+              setShowBlind(true);
+              setShowScan(true); 
+            }}
+          />
+          <TextButton title='send'
+            onPress={() => { Alert.alert('send') }}
+          />
+        </View>
       </View>
       { showBlind && <Blind />}
       { showScan && <Scan 
@@ -87,11 +92,23 @@ const App = () => {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#fff',
-    position: 'relative'
+    position: 'relative',
+  },
+  head: {
+    flex: 2,
+    padding: 10,
+  },
+  body: {
+    flex: 6,
+    padding: 10,
+  },
+  foot: {
+    flex: 2,
+    padding: 10,
   },
   appTitle: {
-    //fontFamily: "Roboto",
     fontSize: 30,
     fontWeight: "bold",
     fontStyle: "normal",
@@ -105,31 +122,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderStyle: 'solid',
   },
-  card: {
-    flex: 4
-  },
   buttons: {
     width: '100%',
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    borderWidth: 2,
-    borderRadius: 5,
-    borderStyle: 'solid'
   },
   sampleText: {
-    width: 316,
-    height: 62,
-    //fontFamily: "Roboto",
     fontSize: 24,
     fontWeight: "bold",
     fontStyle: "normal",
     letterSpacing: 0,
     textAlign: "center",
     color: "#aba7a7",
-    marginTop: 300,
-    marginLeft: 40,
   },
 });
 

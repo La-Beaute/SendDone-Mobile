@@ -49,7 +49,7 @@ const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp
         keyExtractor={(item, index)=>item.ip}
       >
       </FlatList>
-      <Button title='OK' onPress={()=>{
+      <Button title='Close' onPress={()=>{
         setShowScan(false);
         setShowBlind(false);
       }} />
@@ -57,14 +57,7 @@ const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp
   );
 };
 
- // const StyledContainer = glamorous.view((props, theme) => ({
-  //   height: 823,
-  //   width: 411,
-  //   backgroundColor: '#ffffff'
-  // },
-
 const styles = StyleSheet.create({
-  
   scan: {
     flex: 1,
     position: 'absolute',
@@ -104,7 +97,6 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     backgroundColor: '#afafaf'
   },
-  
   deviceOs: {
     width: '20%',
   },
