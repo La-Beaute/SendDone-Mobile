@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
+import AddItem from './AddItem';
 import TextButton from './TextButton';
 
 const ItemView = () => {
@@ -17,7 +18,7 @@ const ItemView = () => {
       <View style={styles.buttons}>
         <TextButton title='- Checks' />
         <TextButton title='+ Folders' />
-        <TextButton title='+ Files' />
+        <TextButton title='+ Files' onPress={AddItem}/>
       </View>
     </View>
   )
