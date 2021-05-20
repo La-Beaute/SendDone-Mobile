@@ -6,8 +6,6 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import AddItem from './AddItem';
-import TextButton from './TextButton';
 
 const ItemView = () => {
   return (
@@ -16,9 +14,7 @@ const ItemView = () => {
         
       </FlatList>
       <View style={styles.buttons}>
-        <TextButton title='- Checks' />
-        <TextButton title='+ Folders' />
-        <TextButton title='+ Files' onPress={AddItem}/>
+        
       </View>
     </View>
   )
@@ -27,7 +23,7 @@ const ItemView = () => {
 const styles=StyleSheet.create({
   itemView: {
     width: '95%',
-    height: '95%',
+    height: '80%',
     alignSelf: 'center',
     borderWidth: 1,
     borderStyle: 'solid',
@@ -37,12 +33,6 @@ const styles=StyleSheet.create({
   },
   body: {
     flex: 8
-  },
-  buttons: {
-    flex: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around'
   }
 });
 

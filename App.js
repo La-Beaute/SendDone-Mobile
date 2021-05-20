@@ -15,6 +15,7 @@ import ItemView from './src/ItemView';
 import Blind from './src/Blind';
 import TextButton from './src/TextButton';
 import * as Network from './src/Network';
+import AddItem from './src/AddItem';
 
 const askPermissionAndroid = async () => {
   try {
@@ -43,6 +44,7 @@ const askPermissionAndroid = async () => {
 const App = () => {
   const [showScan, setShowScan] = useState(false);
   const [showBlind, setShowBlind] = useState(false);
+  const [showAddItem, setShowAddItem] = useState(false);
   const [networks, setNetworks] = useState([]);
   const [myIp, setMyIp] = useState('');
   const [netmask, setNetmask] = useState('');
@@ -83,6 +85,11 @@ const App = () => {
       </View>
       <View style={styles.body}>
         <ItemView />
+        <View style={styles.buttons}>
+          <TextButton title='- Checks' />
+          <TextButton title='+ Folders' onPress={()=>{ setShowAddItem(true); }}/>
+          <TextButton title='+ Files' onPress={()=>{ setShowAddItem(true); }}/>
+        </View>
       </View>
       <View style={styles.foot}>
         <Text style={styles.sampleText}>
@@ -113,6 +120,11 @@ const App = () => {
         sendIp={sendIp}
         setSendIp={setSendIp}
         setSendId={setSendId}
+      />}
+      { showAddItem && <AddItem 
+        setShowAddItem={setShowAddItem}
+        items={items}
+        setItems={setItems}
       />}
     </View>
   );
