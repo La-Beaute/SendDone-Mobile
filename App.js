@@ -8,12 +8,13 @@ import {
   Text,
   PermissionsAndroid,
   BackHandler,
-  Alert
+  Alert,
 } from 'react-native';
 import Scan from './src/Scan';
 import Blind from './src/Blind';
 import ItemView from './src/ItemView'
 import * as Network from './src/Network';
+import TextButton from './src/TextButton';
 import { v4 as uuid } from 'uuid'
 
 const askPermissionAndroid = async () => {
@@ -81,9 +82,9 @@ const App = () => {
           </Picker>
         </View>
       </View>
-      <View style={styles.body}>
+      {/* <View style={styles.body}>
         <ItemView />
-      </View>
+      </View> */}
       <View style={styles.card}>
         <ItemView >
 
