@@ -13,6 +13,7 @@ import {
 import Scan from './src/Scan';
 import Blind from './src/Blind';
 import ItemView from './src/ItemView'
+import ItemView2 from './src/ItemView2'
 import * as Network from './src/Network';
 import TextButton from './src/TextButton';
 import { v4 as uuid } from 'uuid'
@@ -86,9 +87,7 @@ const App = () => {
         <ItemView />
       </View> */}
       <View style={styles.card}>
-        <ItemView >
-
-        </ItemView>
+        <ItemView2 />
         <Text style={styles.sampleText}>
           {sendIp ?
             `You have selected ${sendId}(${sendIp})` :
