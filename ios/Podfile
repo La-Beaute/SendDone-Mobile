@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'shareDone' do
+target 'SendDone' do
   config = use_native_modules!
 
   use_react_native!(
@@ -12,7 +12,9 @@ target 'shareDone' do
     :hermes_enabled => false
   )
 
-  target 'shareDoneTests' do
+  pod 'RNOS', :path => '../node_modules/react-native-os'
+
+  target 'SendDoneTests' do
     inherit! :complete
     # Pods for testing
   end

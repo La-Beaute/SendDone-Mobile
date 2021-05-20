@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* shareDoneTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* shareDoneTests.m */; };
+		00E356F31AD99517003FC87E /* SendDoneTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SendDoneTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2E9EE8A6E2A3FB538EB001FD /* libPods-shareDone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79C2743004319532BD8798D4 /* libPods-shareDone.a */; };
+		2E9EE8A6E2A3FB538EB001FD /* libPods-SendDone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79C2743004319532BD8798D4 /* libPods-SendDone.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		B0B37E6259558D2717C7F021 /* libPods-shareDone-shareDoneTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8E65B285341AA6EF479D3F /* libPods-shareDone-shareDoneTests.a */; };
+		B0B37E6259558D2717C7F021 /* libPods-SendDone-SendDoneTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8E65B285341AA6EF479D3F /* libPods-SendDone-SendDoneTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,27 +22,27 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = shareDone;
+			remoteInfo = SendDone;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* shareDoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = shareDoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* SendDoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SendDoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* shareDoneTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = shareDoneTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* shareDone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shareDone.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = shareDone/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = shareDone/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = shareDone/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = shareDone/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = shareDone/main.m; sourceTree = "<group>"; };
-		18210C3F7A1F9A43BF22DE65 /* Pods-shareDone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shareDone.release.xcconfig"; path = "Target Support Files/Pods-shareDone/Pods-shareDone.release.xcconfig"; sourceTree = "<group>"; };
-		1D8E65B285341AA6EF479D3F /* libPods-shareDone-shareDoneTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shareDone-shareDoneTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		33F9E10A0FFEE452BB8CC2DE /* Pods-shareDone-shareDoneTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shareDone-shareDoneTests.debug.xcconfig"; path = "Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests.debug.xcconfig"; sourceTree = "<group>"; };
-		785EEC5A9F6F7E42AC337951 /* Pods-shareDone-shareDoneTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shareDone-shareDoneTests.release.xcconfig"; path = "Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests.release.xcconfig"; sourceTree = "<group>"; };
-		79C2743004319532BD8798D4 /* libPods-shareDone.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shareDone.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = shareDone/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D35ADF139F098C462576A3BA /* Pods-shareDone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shareDone.debug.xcconfig"; path = "Target Support Files/Pods-shareDone/Pods-shareDone.debug.xcconfig"; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* SendDoneTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SendDoneTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* SendDone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SendDone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SendDone/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SendDone/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SendDone/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SendDone/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SendDone/main.m; sourceTree = "<group>"; };
+		18210C3F7A1F9A43BF22DE65 /* Pods-SendDone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SendDone.release.xcconfig"; path = "Target Support Files/Pods-SendDone/Pods-SendDone.release.xcconfig"; sourceTree = "<group>"; };
+		1D8E65B285341AA6EF479D3F /* libPods-SendDone-SendDoneTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SendDone-SendDoneTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		33F9E10A0FFEE452BB8CC2DE /* Pods-SendDone-SendDoneTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SendDone-SendDoneTests.debug.xcconfig"; path = "Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests.debug.xcconfig"; sourceTree = "<group>"; };
+		785EEC5A9F6F7E42AC337951 /* Pods-SendDone-SendDoneTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SendDone-SendDoneTests.release.xcconfig"; path = "Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests.release.xcconfig"; sourceTree = "<group>"; };
+		79C2743004319532BD8798D4 /* libPods-SendDone.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SendDone.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SendDone/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D35ADF139F098C462576A3BA /* Pods-SendDone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SendDone.debug.xcconfig"; path = "Target Support Files/Pods-SendDone/Pods-SendDone.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0B37E6259558D2717C7F021 /* libPods-shareDone-shareDoneTests.a in Frameworks */,
+				B0B37E6259558D2717C7F021 /* libPods-SendDone-SendDoneTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,20 +59,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E9EE8A6E2A3FB538EB001FD /* libPods-shareDone.a in Frameworks */,
+				2E9EE8A6E2A3FB538EB001FD /* libPods-SendDone.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* shareDoneTests */ = {
+		00E356EF1AD99517003FC87E /* SendDoneTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* shareDoneTests.m */,
+				00E356F21AD99517003FC87E /* SendDoneTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = shareDoneTests;
+			path = SendDoneTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -83,7 +83,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* shareDone */ = {
+		13B07FAE1A68108700A75B9A /* SendDone */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -93,15 +93,15 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = shareDone;
+			name = SendDone;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				79C2743004319532BD8798D4 /* libPods-shareDone.a */,
-				1D8E65B285341AA6EF479D3F /* libPods-shareDone-shareDoneTests.a */,
+				79C2743004319532BD8798D4 /* libPods-SendDone.a */,
+				1D8E65B285341AA6EF479D3F /* libPods-SendDone-SendDoneTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -116,9 +116,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* shareDone */,
+				13B07FAE1A68108700A75B9A /* SendDone */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* shareDoneTests */,
+				00E356EF1AD99517003FC87E /* SendDoneTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				E6D9D6A46FB81F7025B9ED01 /* Pods */,
@@ -131,8 +131,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* shareDone.app */,
-				00E356EE1AD99517003FC87E /* shareDoneTests.xctest */,
+				13B07F961A680F5B00A75B9A /* SendDone.app */,
+				00E356EE1AD99517003FC87E /* SendDoneTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -140,10 +140,10 @@
 		E6D9D6A46FB81F7025B9ED01 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				D35ADF139F098C462576A3BA /* Pods-shareDone.debug.xcconfig */,
-				18210C3F7A1F9A43BF22DE65 /* Pods-shareDone.release.xcconfig */,
-				33F9E10A0FFEE452BB8CC2DE /* Pods-shareDone-shareDoneTests.debug.xcconfig */,
-				785EEC5A9F6F7E42AC337951 /* Pods-shareDone-shareDoneTests.release.xcconfig */,
+				D35ADF139F098C462576A3BA /* Pods-SendDone.debug.xcconfig */,
+				18210C3F7A1F9A43BF22DE65 /* Pods-SendDone.release.xcconfig */,
+				33F9E10A0FFEE452BB8CC2DE /* Pods-SendDone-SendDoneTests.debug.xcconfig */,
+				785EEC5A9F6F7E42AC337951 /* Pods-SendDone-SendDoneTests.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -152,9 +152,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* shareDoneTests */ = {
+		00E356ED1AD99517003FC87E /* SendDoneTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "shareDoneTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SendDoneTests" */;
 			buildPhases = (
 				F53851D246E944BC9AB8306A /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -168,14 +168,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = shareDoneTests;
-			productName = shareDoneTests;
-			productReference = 00E356EE1AD99517003FC87E /* shareDoneTests.xctest */;
+			name = SendDoneTests;
+			productName = SendDoneTests;
+			productReference = 00E356EE1AD99517003FC87E /* SendDoneTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* shareDone */ = {
+		13B07F861A680F5B00A75B9A /* SendDone */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "shareDone" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SendDone" */;
 			buildPhases = (
 				6D10DD653D0F0A8082995670 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -190,9 +190,9 @@
 			);
 			dependencies = (
 			);
-			name = shareDone;
-			productName = shareDone;
-			productReference = 13B07F961A680F5B00A75B9A /* shareDone.app */;
+			name = SendDone;
+			productName = SendDone;
+			productReference = 13B07F961A680F5B00A75B9A /* SendDone.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -212,7 +212,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "shareDone" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SendDone" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -225,8 +225,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* shareDone */,
-				00E356ED1AD99517003FC87E /* shareDoneTests */,
+				13B07F861A680F5B00A75B9A /* SendDone */,
+				00E356ED1AD99517003FC87E /* SendDoneTests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,15 +271,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5DA2F6B2DADE44E7DCC78E6E /* [CP] Copy Pods Resources */ = {
@@ -288,15 +288,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6D10DD653D0F0A8082995670 /* [CP] Check Pods Manifest.lock */ = {
@@ -314,7 +314,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-shareDone-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SendDone-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -327,15 +327,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-shareDone/Pods-shareDone-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SendDone/Pods-SendDone-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C66B42CD39F041067C097B7E /* [CP] Embed Pods Frameworks */ = {
@@ -344,15 +344,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-shareDone-shareDoneTests/Pods-shareDone-shareDoneTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SendDone-SendDoneTests/Pods-SendDone-SendDoneTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F53851D246E944BC9AB8306A /* [CP] Check Pods Manifest.lock */ = {
@@ -370,7 +370,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-shareDone-shareDoneTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SendDone-SendDoneTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -403,7 +403,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* shareDoneTests.m in Sources */,
+				00E356F31AD99517003FC87E /* SendDoneTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,7 +421,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* shareDone */;
+			target = 13B07F861A680F5B00A75B9A /* SendDone */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -429,14 +429,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33F9E10A0FFEE452BB8CC2DE /* Pods-shareDone-shareDoneTests.debug.xcconfig */;
+			baseConfigurationReference = 33F9E10A0FFEE452BB8CC2DE /* Pods-SendDone-SendDoneTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = shareDoneTests/Info.plist;
+				INFOPLIST_FILE = SendDoneTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -450,17 +450,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/shareDone.app/shareDone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SendDone.app/SendDone";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 785EEC5A9F6F7E42AC337951 /* Pods-shareDone-shareDoneTests.release.xcconfig */;
+			baseConfigurationReference = 785EEC5A9F6F7E42AC337951 /* Pods-SendDone-SendDoneTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = shareDoneTests/Info.plist;
+				INFOPLIST_FILE = SendDoneTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -474,19 +474,19 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/shareDone.app/shareDone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SendDone.app/SendDone";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D35ADF139F098C462576A3BA /* Pods-shareDone.debug.xcconfig */;
+			baseConfigurationReference = D35ADF139F098C462576A3BA /* Pods-SendDone.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = shareDone/Info.plist;
+				INFOPLIST_FILE = SendDone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -497,7 +497,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = shareDone;
+				PRODUCT_NAME = SendDone;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -506,12 +506,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18210C3F7A1F9A43BF22DE65 /* Pods-shareDone.release.xcconfig */;
+			baseConfigurationReference = 18210C3F7A1F9A43BF22DE65 /* Pods-SendDone.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = shareDone/Info.plist;
+				INFOPLIST_FILE = SendDone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -522,7 +522,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = shareDone;
+				PRODUCT_NAME = SendDone;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -654,7 +654,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "shareDoneTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SendDoneTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -663,7 +663,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "shareDone" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SendDone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -672,7 +672,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "shareDone" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SendDone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

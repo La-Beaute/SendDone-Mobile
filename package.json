@@ -1,6 +1,6 @@
 {
-  "name": "shareDone",
-  "version": "0.0.1",
+  "name": "SendDone",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,8 +10,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-picker/picker": "^1.16.0",
+    "buffer": "^6.0.3",
     "react": "17.0.1",
-    "react-native": "0.64.1"
+    "react-native": "0.64.1",
+    "react-native-fs": "^2.18.0",
+    "react-native-os": "^1.2.6",
+    "react-native-tcp-socket": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.0",
@@ -25,5 +30,19 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "react-native": {
+    "net": "react-native-tcp-socket",
+    "os": "react-native-os"
+  },
+  "browser": {
+    "net": "react-native-tcp",
+    "os": "react-native-os",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }
