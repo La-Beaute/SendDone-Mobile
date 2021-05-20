@@ -8,6 +8,8 @@ import {
   FlatList,
   SafeAreaView
 } from 'react-native';
+import AddItem from './AddItem';
+import TextButton from './TextButton';
 const Row_File = ({item}) =>{
     console.log("Row_File");
     console.log(item.file_path);
@@ -51,7 +53,6 @@ const Row_File_Dir = ({item}) =>{
         <Row_File
             item = {item} />
     }
-    </View>
     );
 };
 const ItemView = ({items, /* curDir, setCurDir, */ checkedItems, setCheckedItems }) => {
