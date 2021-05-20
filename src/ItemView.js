@@ -53,6 +53,7 @@ const Row_File_Dir = ({item}) =>{
         <Row_File
             item = {item} />
     }
+    </View>
     );
 };
 const ItemView = ({items, /* curDir, setCurDir, */ checkedItems, setCheckedItems }) => {
