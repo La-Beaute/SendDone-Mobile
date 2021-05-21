@@ -209,7 +209,7 @@ const ItemView2 = ({items}) => {
 const styles = StyleSheet.create({
  itemview :{
         backgroundColor : "#fff44f",
-        height : 400,
+        height : '60%',
         marginTop : 40
       }    
 });
