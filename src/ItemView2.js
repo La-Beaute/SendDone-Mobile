@@ -11,59 +11,38 @@ import {
 import AddItem from './AddItem';
 import TextButton from './TextButton';
 
+const indent = '   ';
+
 const Row_File = ({item}) =>{
-    console.log("Row_File");
-    console.log(item.file_path);
     return(
-        <Text>  { '📄' }{'       '}{item.file_path}</Text>
-    );
-};
-const Row_Dir = ({item_list}) =>{
-    console.log("Row_Dir");
-    console.log(item_list.dir_path);
-    console.log(item_list.file_list);
-    const renderItem_Dir = ({item}) =>
-    {
-        console.log("renderItem");
-        console.log(item.file_path);
-        if(item.dir)
-        {
-            return(
-                <Text>  {'       '}{ '📄' }{'       '}{item.file_path}</Text>
-            );
-        }
-        return(
-            <Row_Dir
-                item_list = {item.item_list}
-            />
-            );
-    }
-    return(
-        <SafeAreaView>
-        <Text>  { '📁' }{'       '}{item_list.dir_path}</Text>
-        <FlatList
-            data = {item_list.file_list}
-            renderItem = {renderItem_Dir}
-        />
-        </SafeAreaView>
+    <Text>  {indent.repeat(item.deep)}{ '📄' }{'       '}{item.path}</Text>
     );
 };
 const Row_File_Dir = ({item}) =>{
-    console.log('Row_FIle_Dir');
-    console.log(item.dir_path);
-    console.log(item.dir);
-    return(
-        <View>
-    { item.dir && 
-        <Row_Dir 
-            item_list = {item}/>
-    }
-    { !item.dir && 
-        <Row_File
-            item = {item} />
-    }
-    </View>
-    );
+    var dir = item['type'] == 'directory';
+    const renderItem = ({item}) =>
+    {
+        return(
+            <Row_File_Dir
+            item = {item}
+            />
+        );
+    };
+    if(!dir)
+        return(
+            <Row_File
+            item = {item}/>
+        );
+    else
+        return(
+            <SafeAreaView>
+            <Text>  {indent.repeat(item.deep)}{ '📁' }{'       '}{item.path}</Text>
+            <FlatList
+                data = {item.item_list}
+                renderItem = {renderItem}
+            />
+            </SafeAreaView>
+    );    
 };
 
 const ItemView2 = ({items}) => {
@@ -103,7 +82,43 @@ const ItemView2 = ({items}) => {
                 "type": "directory",
                 "items" : 
                 {
-
+                    "file_4": {
+                        "path": "/home/user_1/directory_1/directory_2/file_4",
+                        "name": "file_4",
+                        "dir": "directory_2",
+                        "type": "file",
+                        "size": 2223      
+                    },
+                    "file_5": {
+                        "path": "/home/user_1/directory_1/directory_2/file_5",
+                        "name": "file_5",
+                        "dir": "directory_2",
+                        "type": "file",
+                        "size": 222      
+                    },
+                    "directory_3" : {
+                        "path": "/home/user_1/directory_1/directory_2/directory_3",
+                        "name": "directory_3",
+                        "dir": "directory_2",
+                        "type": "directory",
+                        "items" : 
+                        {
+                            "file_6": {
+                                "path": "/home/user_1/directory_1/directory_2/directory_3/file_6",
+                                "name": "file_6",
+                                "dir": "directory_3",
+                                "type": "file",
+                                "size": 111
+                            },
+                            "file_7": {
+                                "path": "/home/user_1/directory_1/directory_2/directory_3/file_7",
+                                "name": "file_7",
+                                "dir": "directory_3",
+                                "type": "file",
+                                "size": 111
+                            }
+                        }                            
+                    }
                 }
               }
             }
@@ -111,70 +126,81 @@ const ItemView2 = ({items}) => {
         }
       }
       );
-    const [itemList, addItem] = useState([{dir_path : '', file_path:'/home/th/memo.txt',file_list:[],bool:true,dir:false},
-    {
-        dir_path : "home/th/",
-        file_path : '',
-        file_list : [{file_path : '/home/th/memo1.txt'},{file_path : '/home/th/memo2.txt'}],
-        bool : true,
-        dir : true
-    }
-    ]);
     const renderItem=({item})=>{
-        console.log("In Itemsview2 renderItem");
-        console.log(item.path);
         return(
             <Text>{items.path}</Text>
         );
-        // return(<Row_File_Dir
-        //     item = {item}
-        // />);   
     };
-    function retEle(ele)
+    const object2Item=({item})=>{
+        return(
+            <Row_File_Dir
+                item = {item}
+                />
+        );
+    };
+    function retEle(ele,deep)
     {
-        console.log("retEle");
-        console.log(ele);
-        if(ele["type"]=="file")
+        var ret_obj = Object.assign({},ele);
+        ret_obj['send'] = true;
+        ret_obj['deep'] = deep;
+        if(ret_obj["type"]=="file")
         {
-            return ele["name"];
+            return ret_obj;
         }
         else{
-            var ret = [ele["name"]];            
-            console.log("Directory");            
-            console.log(ele["name"]);
-            if(Object.keys(ele.items).length != 0)
+            if(Object.keys(ret_obj.items).length != 0)
             {
-                for (const [key, value] of Object.entries(ele.items)) {
-                    ret.push(retEle(value));
+                ret_obj['empty'] = false;
+                ret_obj['item_list'] = [];                
+                for (const [key, value] of Object.entries(ret_obj.items)) {
+                    ret_obj['item_list'].push(retEle(value,deep+1));
                 };  
-                console.log(ele["name"]+" retELe return");
-                console.log(ret);
-                return ret;
             }
             else
             {
-                console.log([ele["name"],["Empty"]]);
-                return [ele["name"],["Empty"]];
+                ret_obj['empty'] = true;
             }
+            return ret_obj;
         }
     }
     function dict2list(values)
     {
-        console.log("dict2list");
         var ret = [];
         for (const [key, value] of Object.entries(values)) {
-            ret.push(retEle(value));
+            ret.push(retEle(value,0));
           };
-        console.log("ret");
-        console.log(ret);
         return ret;       
     }
+    function showEle(ele)
+    {
+        if(ele.type=="file")
+        {
+            console.log(ele);
+        }
+        else{
+            console.log(ele);
+            for (const x of ele.item_list)
+            {
+                showEle(x);
+            }            
+        }
+    }
+    var final_item = Object.assign({},items_tmp);
     var item_list = dict2list(items_tmp['items']);
+
+    // console.log("item_list");
+    // for (const x of item_list) { 
+    //     showEle(x);
+    // }
+    // console.log(indent.repeat(4)+'indent');
     return(
         <SafeAreaView style = {styles.itemview}>
             <FlatList
-                data = {items_tmp}            
-                renderItem = {renderItem}            
+                data = {item_list}            
+                renderItem = {object2Item}            
+                contentContainerStyle={{
+                    flexGrow: 1,
+                    }}
             />
         </SafeAreaView>
     );
@@ -183,7 +209,7 @@ const ItemView2 = ({items}) => {
 const styles = StyleSheet.create({
  itemview :{
         backgroundColor : "#fff44f",
-        height : 200,
+        height : 400,
         marginTop : 40
       }    
 });
