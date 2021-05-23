@@ -4,7 +4,16 @@ import * as fs from 'react-native-fs';
 import TextButton from './TextButton';
 import DirButton from './DirButton';
 
-const AddItem = ({ setShowAddItem, items, setItems }) => {
+/**
+ * 
+ * @param {object} props
+ * @param {function} props.setShowAddItem 
+ * @param {function} props.setItems 
+ * @param {boolean} props.selectMultiple
+ * @param {boolean} props.selectDirectoryOnly
+ * @returns 
+ */
+const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnly }) => {
   let [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
   let [curItems, setCurItems] = useState([]);
   let [checkedItems, setCheckedItems] = useState({});
@@ -35,42 +44,45 @@ const AddItem = ({ setShowAddItem, items, setItems }) => {
    * @param {{*}} tmpItems 
    */
   const add = async () => {
-    for(let item of checkedItems){
+    for (let item of checkedItems) {
       await addSubItems(item);
     }
     setItems(items => Object.assign({}, ret, items));
   }
 
-  const updateCurItems= async ()=>{
-    let tmp=await fs.readDir(curDir);
-    setCurItems(()=>tmp);
+  const updateCurItems = async () => {
+    let tmp = await fs.readDir(curDir);
+    if (selectDirectoryOnly) {
+      tmp = tmp.filter((item) => (item.isDirectory()));
+    }
+    tmp.sort((a, b) => (a.name < b.name ? -1 : 1));
+    setCurItems(() => tmp);
   }
 
-  const renderItem=({index, item})=>{
+  const renderItem = ({ index, item }) => {
     return (
-      <TouchableOpacity style={styles.item} onPress={ ()=>{setCurDir(item.path);} }>
-        <Text numberOfLines={1}>{(item.isDirectory() ? '📁' : '📄') + item.name}</Text>
+      <TouchableOpacity style={styles.item} onPress={() => { setCurDir(item.path); }}>
+        <Text numberOfLines={1}>{(item.isDirectory() ? '📁' : '📄') + ' ' + item.name}</Text>
       </TouchableOpacity>
     )
   }
-  
+
   const showCurDir = () => {
-    let ret = [<DirButton style={styles.dirButton} key='Home' title='Home' onPress={ ()=>{setCurDir(fs.ExternalStorageDirectoryPath);} } />];
-    if (curDir===fs.ExternalStorageDirectoryPath)
+    let ret = [<DirButton style={styles.dirButton} key='Home' title='Home' onPress={() => { setCurDir(fs.ExternalStorageDirectoryPath); }} />];
+    if (curDir === fs.ExternalStorageDirectoryPath)
       return ret;
-    let dirArray = curDir.replace(fs.ExternalStorageDirectoryPath+'/', '').split('/');
+    let dirArray = curDir.replace(fs.ExternalStorageDirectoryPath + '/', '').split('/');
     let cumulativeDir = fs.ExternalStorageDirectoryPath;
     for (let i = 0; i < dirArray.length; ++i) {
       ret.push(<Text key={i}>{'>'}</Text>);
-      cumulativeDir = cumulativeDir+'/'+dirArray[i];
+      cumulativeDir = cumulativeDir + '/' + dirArray[i];
       let tmp = cumulativeDir;
       ret.push(<DirButton style={styles.dirButton} key={tmp} title={dirArray[i]} onPress={() => { setCurDir(tmp); }} />);
     }
-    console.log(ret);
     return ret;
   }
-  
-  useEffect( async ()=>{
+
+  useEffect(async () => {
     await updateCurItems();
   }, [curDir]);
 
@@ -81,7 +93,7 @@ const AddItem = ({ setShowAddItem, items, setItems }) => {
       </ScrollView>
       <View style={styles.body}>
         <FlatList
-          keyExtractor={ (item)=>item.name }
+          keyExtractor={(item) => item.name}
           data={curItems}
           renderItem={renderItem}
         />
@@ -102,7 +114,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'white',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   head: {
     height: '10%',
@@ -111,7 +123,11 @@ const styles = StyleSheet.create({
   },
   body: {
     width: '95%',
-    height: '80%'
+    height: '80%',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'grey',
+    borderRadius: 10
   },
   foot: {
     width: '100%',
@@ -131,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddItem;
+export default Explorer;

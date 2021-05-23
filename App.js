@@ -15,7 +15,7 @@ import ItemView from './src/ItemView';
 import Blind from './src/Blind';
 import TextButton from './src/TextButton';
 import * as Network from './src/Network';
-import AddItem from './src/AddItem';
+import Explorer from './src/Explorer';
 
 const askPermissionAndroid = async () => {
   try {
@@ -121,10 +121,11 @@ const App = () => {
         setSendIp={setSendIp}
         setSendId={setSendId}
       />}
-      { showAddItem && <AddItem 
+      { showAddItem && <Explorer 
         setShowAddItem={setShowAddItem}
-        items={items}
         setItems={setItems}
+        selectMultiple={false}
+        selectDirectoryOnly={false}
       />}
     </View>
   );
