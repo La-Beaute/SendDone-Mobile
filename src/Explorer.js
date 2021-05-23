@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import * as fs from 'react-native-fs';
+import Checkbox from '@react-native-community/checkbox';
+import Path from './Path';
 import TextButton from './TextButton';
 import DirButton from './DirButton';
 
 /**
  * 
  * @param {object} props
- * @param {function} props.setShowAddItem 
+ * @param {function} props.setShowExplorer 
+ * @param {{}} props.items
  * @param {function} props.setItems 
  * @param {boolean} props.selectMultiple
  * @param {boolean} props.selectDirectoryOnly
  * @returns 
  */
-const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnly }) => {
+const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDirectoryOnly }) => {
   let [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
   let [curItems, setCurItems] = useState([]);
+  /**
+   * @type {[[{path:string, name:string, dir:string}], function]} useState 
+   */
   let [checkedItems, setCheckedItems] = useState({});
 
   const addSubItems = async (item) => {
@@ -25,7 +31,7 @@ const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnl
         item.type = 'directory';
         item.items = {};
         for (let subItem of (await fs.readdir(item.path))) {
-          item.items[subItem] = { path: path.join(item.path, subItem), name: subItem, dir: path.join(item.dir, item.name) };
+          item.items[subItem] = { path: Path.join(item.path, subItem), name: subItem, dir: Path.join(item.dir, item.name) };
           await addSubItems(item.items[subItem]);
         }
       }
@@ -44,10 +50,19 @@ const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnl
    * @param {{*}} tmpItems 
    */
   const add = async () => {
+    let ret = {};
     for (let item of checkedItems) {
+      ret[item.name] = { path: item.path, name: item.name, dir: '.' };
       await addSubItems(item);
     }
+    console.log(ret);
     setItems(items => Object.assign({}, ret, items));
+    return;
+  }
+
+  const addAndExit = async () => {
+    await add();
+    setShowExplorer(false);
   }
 
   const updateCurItems = async () => {
@@ -59,10 +74,23 @@ const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnl
     setCurItems(() => tmp);
   }
 
+  const getKeyFromItem = (item) => {
+    return item.name;
+  }
+  
   const renderItem = ({ index, item }) => {
     return (
-      <TouchableOpacity style={styles.item} onPress={() => { setCurDir(item.path); }}>
-        <Text numberOfLines={1}>{(item.isDirectory() ? '📁' : '📄') + ' ' + item.name}</Text>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => {
+          console.log(item.name);
+          if (item.isDirectory())
+            setCurDir(item.path);
+        }}
+      >
+        <Text numberOfLines={1}>
+          {(item.isDirectory() ? '📁' : '📄') + item.name}
+        </Text>
       </TouchableOpacity>
     )
   }
@@ -88,19 +116,22 @@ const Explorer = ({ setShowAddItem, setItems, selectMultiple, selectDirectoryOnl
 
   return (
     <View style={styles.addItem}>
-      <ScrollView horizontal style={styles.head} contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}>
+      <ScrollView
+        horizontal style={styles.head}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+      >
         {showCurDir()}
       </ScrollView>
       <View style={styles.body}>
         <FlatList
-          keyExtractor={(item) => item.name}
+          keyExtractor={getKeyFromItem}
           data={curItems}
           renderItem={renderItem}
         />
       </View>
       <View style={styles.foot}>
-        <TextButton title='Exit' onPress={() => { setShowAddItem(false); }}></TextButton>
-        <TextButton title='Add' onPress={add}></TextButton>
+        <TextButton title='Exit' onPress={() => { setShowExplorer(false); }} />
+        <TextButton title='Add' onPress={addAndExit} />
       </View>
     </View>
   );
