@@ -17,12 +17,12 @@ import DirButton from './DirButton';
  * @returns 
  */
 const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDirectoryOnly }) => {
-  let [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
-  let [curItems, setCurItems] = useState([]);
+  const [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
+  const [curItems, setCurItems] = useState([]);
   /**
-   * @type {[[{path:string, name:string, dir:string}], function]} useState 
+   * @type {[Object.<string, boolean>, function]} useState 
    */
-  let [checkedItems, setCheckedItems] = useState({});
+   const [checkedItems, setCheckedItems] = useState({});
 
   const addSubItems = async (item) => {
     try {
@@ -47,13 +47,12 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
 
   /**
    * 
-   * @param {{*}} tmpItems 
    */
   const add = async () => {
     let ret = {};
-    for (let item of checkedItems) {
-      ret[item.name] = { path: item.path, name: item.name, dir: '.' };
-      await addSubItems(item);
+    for (let item in checkedItems) {
+      ret[Path.basename(item)] = { path: item, name: Path.basename(item), dir: '.' };
+      await addSubItems(ret[Path.basename(item)]);
     }
     console.log(ret);
     setItems(items => Object.assign({}, ret, items));
@@ -66,6 +65,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   }
 
   const updateCurItems = async () => {
+    setCheckedItems({});
     let tmp = await fs.readDir(curDir);
     if (selectDirectoryOnly) {
       tmp = tmp.filter((item) => (item.isDirectory()));
@@ -77,13 +77,44 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   const getKeyFromItem = (item) => {
     return item.name;
   }
-  
+
+  /**
+   * 
+   * @param {string} path 
+   */
+  const handleCheck = (path) => {
+    console.log(checkedItems);
+    const value=!(path in checkedItems);
+    if (value) {
+      if (selectMultiple) {
+        setCheckedItems(() => {
+          const tmp = { ...checkedItems };
+          tmp[path] = true;
+          return tmp;
+        });
+      }
+      else{
+        setCheckedItems(() => {
+          const tmp = {};
+          tmp[path] = true;
+          return tmp;
+        });
+      }
+    }
+    else {
+      setCheckedItems(() => {
+        const tmp = { ...checkedItems };
+        delete tmp[path];
+        return tmp;
+      });
+    }
+  }
+
   const renderItem = ({ index, item }) => {
     return (
       <TouchableOpacity
         style={styles.item}
         onPress={() => {
-          console.log(item.name);
           if (item.isDirectory())
             setCurDir(item.path);
         }}
@@ -91,6 +122,11 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
         <Text numberOfLines={1}>
           {(item.isDirectory() ? '📁' : '📄') + item.name}
         </Text>
+        <Checkbox
+          tintColors={{true: '#ff6900', false: 'grey'}}
+          value={checkedItems[item.path]}
+          onTouchEnd={() => { handleCheck(item.path); }}
+        />
       </TouchableOpacity>
     )
   }

@@ -122,9 +122,10 @@ const App = () => {
         setSendId={setSendId}
       />}
       { showAddItem && <Explorer 
-        setShowAddItem={setShowAddItem}
+        setShowExplorer={setShowAddItem}
+        items={items}
         setItems={setItems}
-        selectMultiple={false}
+        selectMultiple={true}
         selectDirectoryOnly={false}
       />}
     </View>
