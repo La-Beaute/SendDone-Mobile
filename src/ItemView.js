@@ -8,51 +8,16 @@ import {
   FlatList,
   SafeAreaView
 } from 'react-native';
-import AddItem from './AddItem';
-import TextButton from './TextButton';
-const Row_File = ({item}) =>{
-    console.log("Row_File");
-    console.log(item.file_path);
-    return(
-        <Text>  { '📄' }{'       '}{item.file_path}</Text>
-    );
-};
-const Row_Dir = ({item_list}) =>{
-    console.log("Row_Dir");
-    console.log(item_list.dir_path);
-    console.log(item_list.file_list);
-    const renderItem_Dir = ({item}) =>
-    {
-        console.log("renderItem");
-        console.log(item.file_path);
-        return(
-            <Text>  {'       '}{ '📄' }{'       '}{item.file_path}</Text>
-        );
-    }
-    return(
-        <SafeAreaView>
-        <Text>  { '📁' }{'       '}{item_list.dir_path}</Text>
-        <FlatList
-            data = {item_list.file_list}
-            renderItem = {renderItem_Dir}
-        />
-        </SafeAreaView>
-    );
-};
-const Row_File_Dir = ({item}) =>{
-    console.log('Row_FIle_Dir');
-    console.log(item.dir_path);
-    console.log(item.dir);
-    return(
-        <View>
-    { item.dir && 
-        <Row_Dir 
-            item_list = {item}/>
-    }
-    { !item.dir && 
-        <Row_File
-            item = {item} />
-    }
+
+const ItemView = () => {
+  return (
+    <View style={styles.itemView}>
+      <FlatList style={styles.body}>
+        
+      </FlatList>
+      <View style={styles.buttons}>
+        
+      </View>
     </View>
     );
 };
@@ -84,13 +49,20 @@ const ItemView = ({items, /* curDir, setCurDir, */ checkedItems, setCheckedItems
     );
 };
 
-
-const styles = StyleSheet.create({
- itemview :{
-        backgroundColor : "#fff44f",
-        height : 200,
-        marginTop : 40
-      }    
+const styles=StyleSheet.create({
+  itemView: {
+    width: '95%',
+    height: '80%',
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'darkgrey',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  body: {
+    flex: 8
+  }
 });
 
 export default ItemView;
