@@ -50,11 +50,101 @@ const App = () => {
   const [netmask, setNetmask] = useState('');
   const [sendIp, setSendIp] = useState('');
   const [sendId, setSendId] = useState('');
-  const [items, setItems] = useState({});
-
+  // const [items, setItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState({});
+  const [th_items, set_th_items] = useState([]);
   const listNetworks = networks.map((value) => {
     return <Picker.Item label={'Network: ' + value.name + ' | ' + value.ip} value={value.ip + '/' + value.netmask} key={value.ip} />
   });
+  const [items, setItems] = useState({
+    "items": {
+      "file_1": {
+        "path": "/home/user_1/file_1",
+        "name": "file_1",
+        "dir": ".",
+        "type": "file",
+        "size": 1024
+      },
+      // "file_1" : 
+      // {"deep": 0, 
+      // "delete": true, 
+      // "dir": ".", 
+      // "name": "file_1", 
+      // "path": "/home/user_1/file_1", 
+      // "size": 1024, 
+      // "type": "file"}
+      "file_2": {
+        "path": "/home/user_1/file_2",
+        "name": "file_2",
+        "dir": ".",
+        "type": "file",
+        "size": 1000
+      },
+      "directory_1": {
+        "path": "/home/user_1/directory_1",
+        "name": "directory_1",
+        "dir": ".",
+        "type": "directory",
+        "items": {
+          "file_3": {
+            "path": "/home/user_1/directory_1/file_3",
+            "name": "file_3",
+            "dir": "directory_1",
+            "type": "file",
+            "size": 123
+          },
+          "directory_2" : {
+            "path": "/home/user_1/directory_1/directory_2",
+            "name": "directory_2",
+            "dir": "directory_1",
+            "type": "directory",
+            "items" : 
+            {
+                "file_4": {
+                    "path": "/home/user_1/directory_1/directory_2/file_4",
+                    "name": "file_4",
+                    "dir": "directory_2",
+                    "type": "file",
+                    "size": 2223      
+                },
+                "file_5": {
+                    "path": "/home/user_1/directory_1/directory_2/file_5",
+                    "name": "file_5",
+                    "dir": "directory_2",
+                    "type": "file",
+                    "size": 222      
+                },
+                "directory_3" : {
+                    "path": "/home/user_1/directory_1/directory_2/directory_3",
+                    "name": "directory_3",
+                    "dir": "directory_2",
+                    "type": "directory",
+                    "items" : 
+                    {
+                        "file_6": {
+                            "path": "/home/user_1/directory_1/directory_2/directory_3/file_6",
+                            "name": "file_6",
+                            "dir": "directory_3",
+                            "type": "file",
+                            "size": 111
+                        },
+                        "file_7": {
+                            "path": "/home/user_1/directory_1/directory_2/directory_3/file_7",
+                            "name": "file_7",
+                            "dir": "directory_3",
+                            "type": "file",
+                            "size": 111
+                        }
+                    }                            
+                }
+            }
+          }
+        }
+      }
+    }
+  }
+  );
+
 
   useEffect(async () => {
     const granted=askPermissionAndroid();
@@ -65,7 +155,18 @@ const App = () => {
       setNetworks(() => Network.getMyNetworks());
     }
   }, []);
-
+  function log_all_items(items)
+  {
+      console.log(items);
+      for (const [key, value] of Object.entries(items)) 
+      {
+        console.log("key : ",key," value : ",value);
+        if(value.type=='directory')
+        {
+            log_all_items(value.items);
+        }
+      }
+  };
   return (
     <View style={styles.app}>
       <View style={styles.head}>
@@ -87,7 +188,20 @@ const App = () => {
         <ItemView />
       </View> */}
       <View style={styles.card}>
-        <ItemView2 />
+        <ItemView2 
+          items = {items}
+          setItems = {setItems}
+          th_items = {th_items}
+          set_th_items = {set_th_items}        
+        />
+        <View style={styles.buttons}>
+          <TextButton title='+FILE'
+            // onPress={() => { Alert.alert('send') }}
+          />
+          <TextButton title='+FOLDER'
+            // onPress={() => { Alert.alert('send') }}
+          />
+        </View>
         <Text style={styles.sampleText}>
           {sendIp ?
             `You have selected ${sendId}(${sendIp})` :
@@ -102,7 +216,10 @@ const App = () => {
             }}
           />
           <TextButton title='send'
-            onPress={() => { Alert.alert('send') }}
+            onPress={() => { 
+              Alert.alert('send') ;
+              log_all_items(items.items);
+            }}
           />
         </View>
       </View>
