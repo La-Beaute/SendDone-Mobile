@@ -103,6 +103,18 @@ const ItemView2 = ({items, setItems, th_items, set_th_items}) => {
     return(
         <SafeAreaView style = {styles.itemview}>
             <View style = {styles.singleview}>
+            <Text style={{ fontSize: 20 }} >{"Components        "}</Text>
+            <CheckBox style={{ size : 5, backgroundColor : '#000000' }}
+            value = {checkAll}
+            onChange = {() => {
+                console.log("before call set function ",checkAll);
+                setCheckAll(checkAll => !checkAll);
+                console.log("check All Toggeled", checkAll);
+                var call_bool = !checkAll;
+                for(const item of th_items)
+                    checkAlldeleted(item,call_bool);
+            }}
+            />
             <TextButton title='Upload'
                         onPress={() => {
                         console.log("Upload : ", items);
@@ -125,26 +137,6 @@ const ItemView2 = ({items, setItems, th_items, set_th_items}) => {
                         setItems(next_items);
                     }}
                     />
-            <TextButton title='Confirm'
-                        onPress={() => {
-                        // var tmp = convert_obj_to_items(th_items);
-                        setItems(items=>convert_obj_to_items(th_items));
-                    }}
-                    />
-            </View>
-            <View style = {styles.singleview}>
-            <Text style={{ fontSize: 20 }} >{"Components        "}</Text>
-            <CheckBox style={{ size : 5, backgroundColor : '#000000' }}
-            value = {checkAll}
-            onChange = {() => {
-                console.log("before call set function ",checkAll);
-                setCheckAll(checkAll => !checkAll);
-                console.log("check All Toggeled", checkAll);
-                var call_bool = !checkAll;
-                for(const item of th_items)
-                    checkAlldeleted(item,call_bool);
-            }}
-            />
             </View>
             <FlatList
                 data = {th_items}
