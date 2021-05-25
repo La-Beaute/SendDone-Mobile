@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView, BackHandler } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import * as fs from 'react-native-fs';
 import Checkbox from '@react-native-community/checkbox';
 import Path from './Path';
@@ -190,7 +190,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
           style={styles.dirButton}
           key={tmp}
           title={dirArray[i]}
-          onPress={async () => { setCurDir(tmp); }} />);
+          onPress={() => { setCurDir(tmp); }} />);
     }
     return ret;
   }
@@ -198,8 +198,6 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   useEffect(async () => {
     await updateCurItems();
     setCheckedItems({});
-    const backEvent = BackHandler.addEventListener('hardwareBackPress', () => { setShowExplorer(false); return true; });
-    return () => { backEvent.remove(); };
   }, [curDir]);
 
   useEffect(() => {

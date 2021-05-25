@@ -67,7 +67,7 @@ const App = () => {
   }
 
   useEffect(async () => {
-    const granted = askPermissionAndroid();
+    const granted = await askPermissionAndroid();
     if (!granted) {
       BackHandler.exitApp();
     }
