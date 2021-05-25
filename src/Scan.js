@@ -8,14 +8,14 @@ import {
   FlatList
 } from 'react-native';
 
-const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp, setSendId}) => {
-  const [deviceList, setDeviceList]=useState([]);
+const Scan = ({ myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp, setSendId }) => {
+  const [deviceList, setDeviceList] = useState([]);
 
-  const renderDevice=({item})=>{
+  const renderDevice = ({ item }) => {
     return (
-      <TouchableOpacity 
-        style={item.ip===sendIp ? styles.deviceSelected : styles.device}
-        onPress={()=>{ setSendIp(item.ip); setSendId(item.id); }}
+      <TouchableOpacity
+        style={item.ip === sendIp ? styles.deviceSelected : styles.device}
+        onPress={() => { setSendIp(item.ip); setSendId(item.id); }}
       >
         <View style={styles.deviceOs}>
           <Text>
@@ -33,23 +33,23 @@ const Scan = ({myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp
       </TouchableOpacity>
     );
   }
-  useEffect(()=>{
+  useEffect(() => {
     // TODO Add my device ID.
-    setDeviceList(()=>[]);
-    scan(myIp, netmask, '123', (deviceIp, deviceVersion, deviceId, deviceOs)=>{
-      setDeviceList(()=>
-        [...deviceList, {ip:deviceIp, version:deviceVersion, id:deviceId, os:deviceOs}]);
+    setDeviceList(() => []);
+    scan(myIp, netmask, '123', (deviceIp, deviceVersion, deviceId, deviceOs) => {
+      setDeviceList(() =>
+        [...deviceList, { ip: deviceIp, version: deviceVersion, id: deviceId, os: deviceOs }]);
     });
   }, []);
   return (
     <View style={styles.scan}>
-      <FlatList 
-        data={deviceList} 
+      <FlatList
+        data={deviceList}
         renderItem={renderDevice}
-        keyExtractor={(item, index)=>item.ip}
+        keyExtractor={(item, index) => item.ip}
       >
       </FlatList>
-      <Button title='Close' onPress={()=>{
+      <Button title='Close' onPress={() => {
         setShowScan(false);
         setShowBlind(false);
       }} />

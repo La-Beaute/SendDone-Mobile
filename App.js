@@ -49,10 +49,22 @@ const App = () => {
   const [sendIp, setSendIp] = useState('');
   const [sendId, setSendId] = useState('');
   const [items, setItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState({});
 
   const listNetworks = networks.map((value) => {
     return <Picker.Item label={'Network: ' + value.name + ' | ' + value.ip} value={value.ip + '/' + value.netmask} key={value.ip} />
   });
+
+  const deleteCheckedItems = () => {
+    setItems(items => {
+      let tmp = { ...items };
+      for (let itemName in checkedItems) {
+        delete tmp[itemName];
+      }
+      return tmp;
+    });
+    setCheckedItems({});
+  }
 
   useEffect(async () => {
     const granted = askPermissionAndroid();
@@ -63,6 +75,7 @@ const App = () => {
       setNetworks(() => Network.getMyNetworks());
     }
   }, []);
+
   return (
     <View style={styles.app}>
       <View style={styles.head}>
@@ -81,9 +94,13 @@ const App = () => {
         </View>
       </View>
       <View style={styles.body}>
-        <ItemView />
+        <ItemView
+          items={items}
+          checkedItems={checkedItems}
+          setCheckedItems={setCheckedItems}
+        />
         <View style={styles.buttons}>
-          <TextButton title='- Checked' />
+          <TextButton title='- Checked' onPress={deleteCheckedItems} />
           <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
         </View>
       </View>
@@ -140,7 +157,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   body: {
-    flex: 6,
+    flex: 7,
     padding: 10,
   },
   foot: {
