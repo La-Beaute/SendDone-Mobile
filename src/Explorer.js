@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, ScrollView, BackHandler } from 'react-native';
 import * as fs from 'react-native-fs';
 import Checkbox from '@react-native-community/checkbox';
 import Path from './Path';
@@ -22,7 +22,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   /**
    * @type {[Object.<string, boolean>, function]} useState 
    */
-   const [checkedItems, setCheckedItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState({});
 
   const addSubItems = async (item) => {
     try {
@@ -49,13 +49,18 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
    * 
    */
   const add = async () => {
+    if (!selectMultiple) {
+      // Just set to the item path.
+      // TODO flex.
+      setItems(checkedItems);
+      return;
+    }
     let ret = {};
     for (let item in checkedItems) {
       ret[Path.basename(item)] = { path: item, name: Path.basename(item), dir: '.' };
       await addSubItems(ret[Path.basename(item)]);
     }
-    console.log(ret);
-    setItems(items => Object.assign({}, ret, items));
+    setItems(() => Object.assign({}, ret, items));
     return;
   }
 
@@ -83,8 +88,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
    * @param {string} path 
    */
   const handleCheck = (path) => {
-    console.log(checkedItems);
-    const value=!(path in checkedItems);
+    const value = !(path in checkedItems);
     if (value) {
       if (selectMultiple) {
         setCheckedItems(() => {
@@ -93,7 +97,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
           return tmp;
         });
       }
-      else{
+      else {
         setCheckedItems(() => {
           const tmp = {};
           tmp[path] = true;
@@ -119,14 +123,18 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
             setCurDir(item.path);
         }}
       >
-        <Text numberOfLines={1}>
-          {(item.isDirectory() ? '📁' : '📄') + item.name}
-        </Text>
-        <Checkbox
-          tintColors={{true: '#ff6900', false: 'grey'}}
-          value={checkedItems[item.path]}
-          onTouchEnd={() => { handleCheck(item.path); }}
-        />
+        <View style={styles.name} >
+          <Text numberOfLines={1}>
+            {(item.isDirectory() ? '📁' : '📄') + ' ' + item.name}
+          </Text>
+        </View>
+        <View style={styles.checkbox}>
+          <Checkbox
+            tintColors={{ true: '#ff6900', false: 'grey' }}
+            value={checkedItems[item.path]}
+            onTouchEnd={() => { handleCheck(item.path); }}
+          />
+        </View>
       </TouchableOpacity>
     )
   }
@@ -148,6 +156,8 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
 
   useEffect(async () => {
     await updateCurItems();
+    const backEvent = BackHandler.addEventListener('hardwareBackPress', () => { setShowExplorer(false); return true; });
+    return () => { backEvent.remove(); };
   }, [curDir]);
 
   return (
@@ -209,9 +219,16 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     flexDirection: 'row',
     borderColor: 'darkgrey',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderStyle: 'solid',
   },
+  name: {
+    flex: 9,
+  },
+  checkbox: {
+    flex: 1
+  }
 });
 
 export default Explorer;

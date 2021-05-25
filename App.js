@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import {
-  SafeAreaView,
   StyleSheet,
-  TextInput,
   View,
   Text,
   PermissionsAndroid,
@@ -57,8 +55,8 @@ const App = () => {
   });
 
   useEffect(async () => {
-    const granted=askPermissionAndroid();
-    if(!granted){
+    const granted = askPermissionAndroid();
+    if (!granted) {
       BackHandler.exitApp();
     }
     if (!myIp) {
@@ -86,9 +84,8 @@ const App = () => {
       <View style={styles.body}>
         <ItemView />
         <View style={styles.buttons}>
-          <TextButton title='- Checks' />
-          <TextButton title='+ Folders' onPress={()=>{ setShowAddItem(true); }}/>
-          <TextButton title='+ Files' onPress={()=>{ setShowAddItem(true); }}/>
+          <TextButton title='- Checked' />
+          <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
         </View>
       </View>
       <View style={styles.foot}>
@@ -121,7 +118,7 @@ const App = () => {
         setSendIp={setSendIp}
         setSendId={setSendId}
       />}
-      { showAddItem && <Explorer 
+      { showAddItem && <Explorer
         setShowExplorer={setShowAddItem}
         items={items}
         setItems={setItems}
