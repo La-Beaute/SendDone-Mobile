@@ -6,7 +6,8 @@ import {
   Button,
   TouchableOpacity,
   FlatList,
-  SafeAreaView
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import AddItem from './AddItem';
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
  itemview :{
         backgroundColor : "#fff44f",
         height : '60%',
-        width : '80%',
+        width : '100%',
         marginTop : 40,
         alignSelf : 'center'
     },    
