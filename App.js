@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import {
-  SafeAreaView,
   StyleSheet,
-  TextInput,
   View,
   Text,
   PermissionsAndroid,
@@ -15,6 +13,7 @@ import Blind from './src/Blind';
 import ItemView from './src/ItemView'
 import ItemView2 from './src/ItemView2'
 import * as Network from './src/Network';
+import Explorer from './src/Explorer';
 import TextButton from './src/TextButton';
 
 const askPermissionAndroid = async () => {
@@ -60,8 +59,8 @@ const App = () => {
 
 
   useEffect(async () => {
-    const granted=askPermissionAndroid();
-    if(!granted){
+    const granted = askPermissionAndroid();
+    if (!granted) {
       BackHandler.exitApp();
     }
     if (!myIp) {
@@ -101,9 +100,8 @@ const App = () => {
         <ItemView />
       </View>
         <View style={styles.buttons}>
-          <TextButton title='- Checks' />
-          <TextButton title='+ Folders' onPress={()=>{ setShowAddItem(true); }}/>
-          <TextButton title='+ Files' onPress={()=>{ setShowAddItem(true); }}/>
+          <TextButton title='- Checked' />
+          <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
         </View>
       </View>
       <View style={styles.foot}>
@@ -139,10 +137,12 @@ const App = () => {
         setSendIp={setSendIp}
         setSendId={setSendId}
       />}
-      { showAddItem && <AddItem 
-        setShowAddItem={setShowAddItem}
+      { showAddItem && <Explorer
+        setShowExplorer={setShowAddItem}
         items={items}
         setItems={setItems}
+        selectMultiple={true}
+        selectDirectoryOnly={false}
       />}
     </View>
   );
