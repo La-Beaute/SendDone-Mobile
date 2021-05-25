@@ -114,7 +114,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
     }
   }
 
-  const renderItem = ({ index, item }) => {
+  const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.item}
@@ -132,7 +132,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
           <Checkbox
             tintColors={{ true: '#ff6900', false: 'grey' }}
             value={checkedItems[item.path]}
-            onTouchEnd={() => { handleCheck(item.path); }}
+            onValueChange={() => { handleCheck(item.path); }}
           />
         </View>
       </TouchableOpacity>

@@ -1,6 +1,6 @@
 const os = require('os');
 const net = require('net');
-const Buffer=require('buffer/').Buffer;
+const Buffer = require('buffer/').Buffer;
 const PORT = 8531;
 const CHUNKSIZE = 4 * 1024 * 1024;
 const HEADER_END = '\n\n';
@@ -27,9 +27,11 @@ const STATE = {
   RECEIVER_END: 'RECEIVER_END'
 };
 const OS = os.platform();
-let maxScanIp=0;
-let scanIndex=0;
-
+let scanIndex = 0;
+let scanSize = 1;
+let scanFirstIp = 0;
+const scanIsAlive = Array(scanSize).fill(false);
+const scanTimeout = 300;
 /**
  * Return an array of dictionary each looks like: { name, ip, netmask }.
  * @returns {Array.<{name:String, ip:String, netmask:String}>} Array of networks.
@@ -85,29 +87,59 @@ function _splitHeader(buf) {
 function scan(ip, netmask, myId, callback) {
   let currentIp = (_IpStringToNumber(ip) & _IpStringToNumber(netmask)) >>> 0;
   let broadcastIp = Math.min(_IpStringToNumber(_IpBroadcastIp(ip, netmask)), currentIp + MAX_SCAN);
-  maxScanIp=0;
+  let myIpInNumber = _IpStringToNumber(ip);
   ++scanIndex;
-  _scan(currentIp, ip, broadcastIp, myId, scanIndex, callback);
+  scanIsAlive.forEach((value, index) => { scanIsAlive[index] = false; });
+  scanFirstIp = currentIp;
+  for (let i = 0; i < scanSize; ++i)
+    _scan(currentIp + i, myIpInNumber, broadcastIp, myId, scanIndex, callback);
 }
-function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
-  const callNext=()=>{
-    setTimeout(()=>{
-      _scan(currentIp+1, myIp, broadcastIp, myId, thisIndex, callback);
-    }, 0);
-  }
-  if(broadcastIp<=currentIp)
+/**
+ * 
+ * @param {number} currentIp 
+ * @param {number} myIp 
+ * @param {number} broadcastIp 
+ * @param {string} myId 
+ * @param {number} thisIndex 
+ * @param {scanCallback} callback 
+ * @returns 
+ */
+function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback) {
+  if (broadcastIp <= currentIp)
     return;
-  if(currentIp==myIp)
-    callNext();
-  if(maxScanIp>=currentIp)
-    return;
-  if(scanIndex!==thisIndex)
-    return;
-  maxScanIp=currentIp;
   let thisIp = _IpNumberToString(currentIp);
-  const socket = net.createConnection({port: PORT, host: thisIp, timeout: 1000});
+  let calledNext = false;
+  let socket = undefined;
+  const callNext = () => {
+    if (calledNext)
+      return;
+    calledNext = true;
+    if (socket)
+      socket.destroy();
+    if (scanIndex !== thisIndex)
+      return;
+    scanIsAlive[currentIp % scanSize] = false;
+    let numAlive = 0;
+    scanIsAlive.map((value, index) => { if (value) ++numAlive; });
+    if (numAlive === 0) {
+      scanFirstIp += scanSize;
+      setTimeout(() => {
+        for (let i = 0; i < scanSize; ++i) {
+          _scan(scanFirstIp + i, myIp, broadcastIp, myId, thisIndex, callback);
+        }
+      }, 0);
+    }
+  }
+  if (currentIp == myIp) {
+    callNext();
+    return;
+  }
+
+  scanIsAlive[currentIp % scanSize] = true;
+  socket = net.createConnection({ port: PORT, host: thisIp, timeout: 300 });
   let recvBuf = Buffer.from([]);
   socket.on('connect', () => {
+    console.log('connected', thisIp);
     let header = {
       app: "SendDone",
       version: VERSION,
@@ -119,9 +151,9 @@ function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
   });
   socket.on('data', (data) => {
     recvBuf = Buffer.concat([recvBuf, data]);
-    if (recvBuf.length >= 100000) {
+    if (recvBuf.length >= 10000) {
       // Too long buffer. Close this malicious connection.
-      socket.end();
+      callNext();
     }
     const ret = _splitHeader(recvBuf);
     if (ret) {
@@ -132,8 +164,7 @@ function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
             callback(thisIp, recvHeader.version, recvHeader.id, recvHeader.os);
         }
       } catch (err) {
-        // Just close this malicious connection.
-        socket.end();
+        // Scan is closed or just close this malicious connection.
       } finally {
         socket.end();
       }
@@ -143,10 +174,9 @@ function _scan(currentIp, myIp, broadcastIp, myId, thisIndex, callback){
     callNext();
   });
   socket.on('close', () => {
-    socket.end();
     callNext();
   });
-  socket.on('timeout', ()=>{
+  socket.on('timeout', () => {
     socket.end();
     callNext();
   });
