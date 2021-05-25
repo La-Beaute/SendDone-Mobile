@@ -218,7 +218,7 @@ const App = () => {
           <TextButton title='send'
             onPress={() => { 
               Alert.alert('send') ;
-              log_all_items(items.items);
+              // log_all_items(items.items);
             }}
           />
         </View>
