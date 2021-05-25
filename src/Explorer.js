@@ -19,6 +19,7 @@ import DirButton from './DirButton';
 const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDirectoryOnly }) => {
   const [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
   const [curItems, setCurItems] = useState([]);
+  const [checkAll, setCheckAll] = useState(false);
   /**
    * @type {[Object.<string, boolean>, function]} useState 
    */
@@ -70,7 +71,6 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   }
 
   const updateCurItems = async () => {
-    setCheckedItems({});
     let tmp = await fs.readDir(curDir);
     if (selectDirectoryOnly) {
       tmp = tmp.filter((item) => (item.isDirectory()));
@@ -114,6 +114,26 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
     }
   }
 
+  /**
+   * 
+   * @param {boolean} value 
+   */
+  const handleCheckAll = (value) => {
+    setCheckAll(value);
+    if (value) {
+      setCheckedItems(() => {
+        const tmp = curItems.reduce((prev, cur) => {
+          prev[cur.path] = true;
+          return prev;
+        }, {});
+        return tmp;
+      });
+    }
+    else {
+      setCheckedItems({});
+    }
+  }
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -139,6 +159,22 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
     )
   }
 
+  const headerItem = () => {
+    return (
+      <View style={styles.headerItem}>
+        <View style={styles.name} >
+        </View>
+        <View style={styles.checkbox}>
+          <Checkbox
+            tintColors={{ true: '#ff6900', false: 'grey' }}
+            value={checkAll}
+            onValueChange={(value) => { handleCheckAll(value); }}
+          />
+        </View>
+      </View>
+    );
+  }
+
   const showCurDir = () => {
     let ret = [<DirButton style={styles.dirButton} key='Home' title='Home' onPress={() => { setCurDir(fs.ExternalStorageDirectoryPath); }} />];
     if (curDir === fs.ExternalStorageDirectoryPath)
@@ -149,16 +185,31 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
       ret.push(<Text key={i}>{'>'}</Text>);
       cumulativeDir = cumulativeDir + '/' + dirArray[i];
       let tmp = cumulativeDir;
-      ret.push(<DirButton style={styles.dirButton} key={tmp} title={dirArray[i]} onPress={() => { setCurDir(tmp); }} />);
+      ret.push(
+        <DirButton
+          style={styles.dirButton}
+          key={tmp}
+          title={dirArray[i]}
+          onPress={async () => { setCurDir(tmp); }} />);
     }
     return ret;
   }
 
   useEffect(async () => {
     await updateCurItems();
+    setCheckedItems({});
     const backEvent = BackHandler.addEventListener('hardwareBackPress', () => { setShowExplorer(false); return true; });
     return () => { backEvent.remove(); };
   }, [curDir]);
+
+  useEffect(() => {
+    let numCheckedItems = Object.keys(checkedItems).length;
+    let numItems = curItems.length;
+    if (numItems > 0 && numCheckedItems === numItems)
+      setCheckAll(true);
+    else
+      setCheckAll(false);
+  }, [checkedItems]);
 
   return (
     <View style={styles.addItem}>
@@ -170,6 +221,8 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
       </ScrollView>
       <View style={styles.body}>
         <FlatList
+          ListHeaderComponent={headerItem}
+          stickyHeaderIndices={[0]}
           keyExtractor={getKeyFromItem}
           data={curItems}
           renderItem={renderItem}
@@ -204,7 +257,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'grey',
-    borderRadius: 10
+    borderRadius: 10,
+    overflow: 'hidden'
   },
   foot: {
     width: '100%',
@@ -222,6 +276,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderStyle: 'solid',
+  },
+  headerItem: {
+    width: '100%',
+    paddingVertical: 10,
+    paddingLeft: 10,
+    flexDirection: 'row',
+    borderColor: 'darkgrey',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    backgroundColor: 'orange'
   },
   name: {
     flex: 9,

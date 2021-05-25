@@ -57,7 +57,7 @@ const ItemView = ({ items, checkedItems, setCheckedItems }) => {
           <Checkbox
             tintColors={{ true: '#ff6900', false: 'grey' }}
             value={checkAll}
-            onValueChange={(value) => { console.log(value); handleCheckAll(value); }}
+            onValueChange={(value) => { handleCheckAll(value); }}
           />
         </View>
       </View>
@@ -97,7 +97,6 @@ const ItemView = ({ items, checkedItems, setCheckedItems }) => {
           prev[cur] = true;
           return prev;
         }, {});
-        console.log('tmp', tmp);
         return tmp;
       });
     }
