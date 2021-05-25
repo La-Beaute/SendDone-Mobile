@@ -1,6 +1,6 @@
+import * as fs from 'react-native-fs';
 const net = require('net');
-const fs = require('fs').promises;
-const { Stats } = require('fs');
+const Buffer = require('buffer/').Buffer;
 const { PORT, STATE, HEADER_END, VERSION, CHUNKSIZE, _splitHeader } = require('./Network');
 
 /**
@@ -43,15 +43,23 @@ class Sender {
      * Size of sent bytes of the current item.
      * @type {number}
      */
-    this._itemSentBytes = 0;
+    this._itemRead = 0;
     /**
      * Size of the item.
      */
     this._itemSize = 0;
     /**
-     * @type {fs.FileHandle}
+     * Read size of the item.
      */
-    this._itemHandle = null;
+    this._itemRead = 0;
+    /**
+     * @type {string}
+     */
+    this._itemPath = '';
+    /**
+     * @type {boolean}
+     */
+    this._itemOpen = false;
     /**
      * @type {number} Index in the item array.
      */
@@ -115,7 +123,7 @@ class Sender {
       return;
     }
 
-    this._socket = net.createConnection(PORT, receiverIp);
+    this._socket = net.createConnection({ port: PORT, host: receiverIp });
     this._socket.on('connect', async () => {
       console.log('client socket connected to ' + this._socket.remoteAddress);
       let sendRequestHeader = this._createSendRequestHeader(items);
@@ -177,10 +185,9 @@ class Sender {
               this._socket.end();
               break
             case 'next':
-              if (this._itemHandle) {
-                // _itemHandle is not null only when sending the current item is not finished.
+              if (this._itemOpen) {
+                // _itemOpen is true only when sending the current item is not finished.
                 // Thus checking it will prevent any unexpected skip.
-                await this._itemHandle.close();
                 this._goToNextItem();
               }
               this._send();
@@ -262,9 +269,6 @@ class Sender {
    */
   async end() {
     if (this._state === STATE.SEND || this._state === STATE.SEND_REQUEST || this._state === STATE.SENDER_STOP || this._state === STATE.RECEIVER_STOP) {
-      if (this._itemHandle) {
-        await this._itemHandle.close();
-      }
       this._endFlag = true;
       if (this._state === STATE.SENDER_STOP || this._state === STATE.RECEIVER_STOP) {
         // Send end header immediately while stop.
@@ -317,7 +321,7 @@ class Sender {
    * @returns {number}
    */
   getItemProgress() {
-    return (this._itemSize === 0 ? 100 : Math.floor(this._itemSentBytes / this._itemSize * 100));
+    return (this._itemSize === 0 ? 100 : Math.floor(this._itemRead / this._itemSize * 100));
   }
   /**
    * Return a string representing the total progress.
@@ -375,13 +379,13 @@ class Sender {
       this._socket.write(JSON.stringify(header) + HEADER_END, 'utf-8', this._onWriteError);
       return;
     }
-    if (!this._itemHandle) {
+    if (!this._itemOpen) {
       // Send 'new' header.
       try {
         let itemStat = await fs.stat(this._itemArray[this._index].path);
         if (itemStat.isDirectory()) {
           this._itemSize = 0;
-          this._itemSentBytes = 0;
+          this._itemRead = 0;
           header = {
             class: 'new',
             name: this._itemArray[this._index].name,
@@ -391,9 +395,10 @@ class Sender {
           this._goToNextItem();
         }
         else {
-          this._itemHandle = await fs.open(this._itemArray[this._index].path);
+          this._itemOpen = true;
+          this._itemPath = this._itemArray[this._index].path;
           this._itemSize = itemStat.size;
-          this._itemSentBytes = 0;
+          this._itemRead = 0;
           header = {
             class: 'new',
             name: this._itemArray[this._index].name,
@@ -414,24 +419,23 @@ class Sender {
     else {
       // Send a chunk with header.
       try {
-        let chunk = Buffer.alloc(CHUNKSIZE);
-        let ret = await this._itemHandle.read(chunk, 0, CHUNKSIZE, null);
-        this._itemSentBytes += ret.bytesRead;
-        chunk = chunk.slice(0, ret.bytesRead);
-        if (this._itemSentBytes === this._itemSize) {
+        let ret = await fs.read(this._itemPath, CHUNKSIZE, this._itemRead, 'base64');
+        let chunk = Buffer.from(ret, 'base64');
+        this._itemRead += chunk.length;
+        if (this._itemRead === this._itemSize) {
           // EOF reached. Done reading this item.
-          await this._itemHandle.close();
+          this._itemRead = false;
           this._goToNextItem();
         }
-        else if (ret.bytesRead === 0 || this._itemSentBytes > this._itemSize) {
+        if (chunk.length === 0 || this._itemRead > this._itemSize) {
           // File size changed. This is unexpected thus consider it an error.
-          await this._itemHandle.close();
+          this._itemOpen = false;
           throw new Error('File Changed');
         }
-        header = { class: 'ok', size: ret.bytesRead };
+        header = { class: 'ok', size: chunk.length };
         header = JSON.stringify(header);
         this._socket.write(Buffer.concat([Buffer.from(header + HEADER_END, 'utf-8'), chunk]), this._onWriteError);
-        this._speedBytes += chunk.byteLength;
+        this._speedBytes += chunk.length;
       } catch (err) {
         // Go to next item.
         this._goToNextItem();
@@ -525,9 +529,9 @@ class Sender {
    */
   _goToNextItem() {
     this._index++;
-    this._itemHandle = null;
+    this._itemOpen = false;
   }
 }
 
 
-module.exports = { Sender };
+export default Sender;

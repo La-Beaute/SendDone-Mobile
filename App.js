@@ -5,15 +5,16 @@ import {
   View,
   Text,
   PermissionsAndroid,
-  BackHandler,
-  Alert
+  BackHandler
 } from 'react-native';
 import Scan from './src/Scan';
 import ItemView from './src/ItemView';
 import Blind from './src/Blind';
 import TextButton from './src/TextButton';
-import * as Network from './src/Network';
 import Explorer from './src/Explorer';
+import * as Network from './src/Network';
+import Sender from './src/Sender';
+import Receiver from './src/Receiver';
 
 const askPermissionAndroid = async () => {
   try {
@@ -38,6 +39,9 @@ const askPermissionAndroid = async () => {
     return true;
   }
 }
+
+let sender = null;
+const receiver = new Receiver();
 
 const App = () => {
   const [showScan, setShowScan] = useState(false);
@@ -119,7 +123,7 @@ const App = () => {
             }}
           />
           <TextButton title='send'
-            onPress={() => { Alert.alert('send') }}
+            onPress={() => { sender = new Sender('123'); sender.send(items, '192.168.1.214'); }}
           />
         </View>
       </View>

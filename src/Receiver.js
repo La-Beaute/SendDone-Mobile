@@ -1,6 +1,7 @@
-const fs = require('fs').promises;
+import * as fs from 'react-native-fs';
+import Path from './Path';
 const net = require('net');
-const path = require('path');
+const Buffer = require('buffer/').Buffer;
 const { PORT, STATE, VERSION, HEADER_END, OS, _splitHeader, } = require('./Network');
 
 class Receiver {
@@ -613,5 +614,4 @@ class Receiver {
   }
 }
 
-
-module.exports = { Receiver };
+export default Receiver;
