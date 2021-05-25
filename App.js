@@ -6,15 +6,14 @@ import {
   Text,
   PermissionsAndroid,
   BackHandler,
-  Alert,
+  Alert
 } from 'react-native';
 import Scan from './src/Scan';
+import ItemView from './src/ItemView';
 import Blind from './src/Blind';
-import ItemView from './src/ItemView'
-import ItemView2 from './src/ItemView2'
+import TextButton from './src/TextButton';
 import * as Network from './src/Network';
 import Explorer from './src/Explorer';
-import TextButton from './src/TextButton';
 
 const askPermissionAndroid = async () => {
   try {
@@ -49,14 +48,11 @@ const App = () => {
   const [netmask, setNetmask] = useState('');
   const [sendIp, setSendIp] = useState('');
   const [sendId, setSendId] = useState('');
-  // const [items, setItems] = useState({});
-  const [checkedItems, setCheckedItems] = useState({});
-  const [th_items, set_th_items] = useState([]);
+  const [items, setItems] = useState({});
+
   const listNetworks = networks.map((value) => {
     return <Picker.Item label={'Network: ' + value.name + ' | ' + value.ip} value={value.ip + '/' + value.netmask} key={value.ip} />
   });
-  const [items, setItems] = useState({});
-
 
   useEffect(async () => {
     const granted = askPermissionAndroid();
@@ -67,18 +63,6 @@ const App = () => {
       setNetworks(() => Network.getMyNetworks());
     }
   }, []);
-  function log_all_items(items)
-  {
-      console.log(items);
-      for (const [key, value] of Object.entries(items)) 
-      {
-        console.log("key : ",key," value : ",value);
-        if(value.type=='directory')
-        {
-            log_all_items(value.items);
-        }
-      }
-  };
   return (
     <View style={styles.app}>
       <View style={styles.head}>
@@ -98,7 +82,6 @@ const App = () => {
       </View>
       <View style={styles.body}>
         <ItemView />
-      </View>
         <View style={styles.buttons}>
           <TextButton title='- Checked' />
           <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
@@ -119,10 +102,7 @@ const App = () => {
             }}
           />
           <TextButton title='send'
-            onPress={() => { 
-              Alert.alert('send') ;
-              // log_all_items(items.items);
-            }}
+            onPress={() => { Alert.alert('send') }}
           />
         </View>
       </View>
@@ -151,11 +131,23 @@ const App = () => {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#fff',
-    position: 'relative'
+    position: 'relative',
+  },
+  head: {
+    flex: 2,
+    padding: 10,
+  },
+  body: {
+    flex: 6,
+    padding: 10,
+  },
+  foot: {
+    flex: 2,
+    padding: 10,
   },
   appTitle: {
-    //fontFamily: "Roboto",
     fontSize: 30,
     fontWeight: "bold",
     fontStyle: "normal",
@@ -169,30 +161,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderStyle: 'solid',
   },
-  card: {
-    flex: 4
-  },
   buttons: {
     width: '100%',
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    borderWidth: 2,
-    borderRadius: 5,
-    borderStyle: 'solid'
   },
   sampleText: {
-    width: 316,
-    height: 62,
-    fontSize: 15,
+    fontSize: 24,
     fontWeight: "bold",
     fontStyle: "normal",
     letterSpacing: 0,
     textAlign: "center",
-    color: "#000000",
-    marginTop: 20,
-    marginLeft: 40,
+    color: "#aba7a7",
   },
 });
 
