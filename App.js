@@ -5,9 +5,13 @@ import {
   View,
   Text,
   PermissionsAndroid,
-  BackHandler
+  BackHandler,
+  Image,
+  TouchableOpacity
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Scan from './src/Scan';
+import Settings from './src/Settings';
 import ItemView from './src/ItemView';
 import Blind from './src/Blind';
 import TextButton from './src/TextButton';
@@ -41,14 +45,20 @@ const askPermissionAndroid = async () => {
 }
 
 let sender = null;
-const receiver = new Receiver();
+let receiver = new Receiver();
+// receiver.openServerSocket('192.168.1.183');
+// receiver.changeMyId('12345');
 
 const App = () => {
   const [showScan, setShowScan] = useState(false);
   const [showBlind, setShowBlind] = useState(false);
   const [showAddItem, setShowAddItem] = useState(false);
-  const [networks, setNetworks] = useState([]);
+  const [showSetPath, setShowSetPath] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [networks, setNetworks] = useState(Network.getMyNetworks());
   const [myIp, setMyIp] = useState('');
+  const [myId, setMyId] = useState('');
+  const [downloadPath, setDownloadPath] = useState('');
   const [netmask, setNetmask] = useState('');
   const [sendIp, setSendIp] = useState('');
   const [sendId, setSendId] = useState('');
@@ -56,7 +66,13 @@ const App = () => {
   const [checkedItems, setCheckedItems] = useState({});
 
   const listNetworks = networks.map((value) => {
-    return <Picker.Item label={'Network: ' + value.name + ' | ' + value.ip} value={value.ip + '/' + value.netmask} key={value.ip} />
+    return (
+      <Picker.Item
+        label={'Network: ' + value.name + ' | ' + value.ip}
+        value={value.ip + '/' + value.netmask}
+        key={value.ip + '/' + value.netmask}
+      />
+    );
   });
 
   const deleteCheckedItems = () => {
@@ -72,21 +88,50 @@ const App = () => {
 
   useEffect(async () => {
     const granted = await askPermissionAndroid();
+    try {
+      let tmp = await AsyncStorage.getItem('downloadPath');
+      if (tmp)
+        setDownloadPath(tmp);
+      tmp = await AsyncStorage.getItem('myId');
+      if (tmp)
+        setMyId(tmp);
+    } catch (err) {
+      // Do nothing.
+      console.log('getItem error', err);
+    }
     if (!granted) {
       BackHandler.exitApp();
     }
-    if (!myIp) {
-      setNetworks(() => Network.getMyNetworks());
-    }
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('myId', myId).catch((err) => {
+      console.log(err);
+    })
+  }, [myId]);
+
+  useEffect(() => {
+    AsyncStorage.setItem('downloadPath', downloadPath).catch((err) => {
+      console.log(err);
+    })
+  }, [downloadPath]);
 
   return (
     <View style={styles.app}>
       <View style={styles.head}>
         <Text style={styles.appTitle}>SendDone</Text>
+        <TouchableOpacity
+          style={styles.settings}
+          onPress={() => { setShowBlind(true); setShowSettings(true); }}>
+          <Image
+            style={styles.settingsImage}
+            source={require('./src/img/settings.png')}
+          />
+        </TouchableOpacity>
         <View style={styles.network}>
           <Picker
-            selectedValue={myIp}
+            selectedValue={myIp + '/' + netmask}
+            dropdownIconColor='#000000'
             onValueChange={(value, index) => {
               const [ip, netmask] = value.split('/');
               setMyIp(ip);
@@ -123,7 +168,7 @@ const App = () => {
             }}
           />
           <TextButton title='send'
-            onPress={() => { sender = new Sender('123'); sender.send(items, '192.168.1.214'); }}
+            onPress={() => { sender = new Sender(myIp); sender.send(items, '192.168.1.214'); }}
           />
         </View>
       </View>
@@ -137,6 +182,13 @@ const App = () => {
         sendIp={sendIp}
         setSendIp={setSendIp}
         setSendId={setSendId}
+      />}
+      { showSettings && <Settings
+        close={() => { setShowSettings(false); setShowBlind(false); }}
+        myId={myId}
+        setMyId={setMyId}
+        downloadpath={downloadPath}
+        setDownloadPath={setDownloadPath}
       />}
       { showAddItem && <Explorer
         setShowExplorer={setShowAddItem}
@@ -197,6 +249,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#aba7a7",
   },
+  settings: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 40,
+    height: 40,
+  },
+  settingsImage: {
+    alignSelf: 'center',
+    width: '100%',
+    height: '100%'
+  }
 });
 
 export default App;

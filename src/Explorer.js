@@ -53,7 +53,11 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
     if (!selectMultiple) {
       // Just set to the item path.
       // TODO flex.
-      setItems(checkedItems);
+      try {
+        setItems(Object.keys(checkedItems)[0]);
+      } catch {
+        setItems('');
+      }
       return;
     }
     let ret = {};
@@ -144,7 +148,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
         }}
       >
         <View style={styles.name} >
-          <Text numberOfLines={1}>
+          <Text numberOfLines={1} ellipsizeMode='middle'>
             {(item.isDirectory() ? '📁' : '📄') + ' ' + item.name}
           </Text>
         </View>
@@ -219,8 +223,8 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
       </ScrollView>
       <View style={styles.body}>
         <FlatList
-          ListHeaderComponent={headerItem}
-          stickyHeaderIndices={[0]}
+          ListHeaderComponent={selectMultiple ? headerItem : null}
+          stickyHeaderIndices={selectMultiple ? [0] : []}
           keyExtractor={getKeyFromItem}
           data={curItems}
           renderItem={renderItem}
@@ -228,7 +232,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
       </View>
       <View style={styles.foot}>
         <TextButton title='Exit' onPress={() => { setShowExplorer(false); }} />
-        <TextButton title='Add' onPress={addAndExit} />
+        <TextButton title={selectMultiple ? 'Add' : 'Set'} onPress={addAndExit} />
       </View>
     </View>
   );
