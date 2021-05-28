@@ -12,11 +12,10 @@ import DirButton from './DirButton';
  * @param {function} props.setShowExplorer 
  * @param {{}} props.items
  * @param {function} props.setItems 
- * @param {boolean} props.selectMultiple
- * @param {boolean} props.selectDirectoryOnly
+ * @param {boolean} props.selectPath
  * @returns 
  */
-const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDirectoryOnly }) => {
+const Explorer = ({ setShowExplorer, items, setItems, selectPath }) => {
   const [curDir, setCurDir] = useState(fs.ExternalStorageDirectoryPath);
   const [curItems, setCurItems] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
@@ -50,14 +49,10 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
    * 
    */
   const add = async () => {
-    if (!selectMultiple) {
+    if (selectPath) {
       // Just set to the item path.
       // TODO flex.
-      try {
-        setItems(Object.keys(checkedItems)[0]);
-      } catch {
-        setItems('');
-      }
+      setItems(curDir);
       return;
     }
     let ret = {};
@@ -76,7 +71,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
 
   const updateCurItems = async () => {
     let tmp = await fs.readDir(curDir);
-    if (selectDirectoryOnly) {
+    if (selectPath) {
       tmp = tmp.filter((item) => (item.isDirectory()));
     }
     tmp.sort((a, b) => (a.name < b.name ? -1 : 1));
@@ -94,7 +89,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   const handleCheck = (path) => {
     const value = !(path in checkedItems);
     if (value) {
-      if (selectMultiple) {
+      if (selectPath) {
         setCheckedItems(() => {
           const tmp = { ...checkedItems };
           tmp[path] = true;
@@ -153,11 +148,13 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
           </Text>
         </View>
         <View style={styles.checkbox}>
-          <Checkbox
-            tintColors={{ true: '#ff6900', false: 'grey' }}
-            value={checkedItems[item.path]}
-            onValueChange={() => { handleCheck(item.path); }}
-          />
+          {!selectPath &&
+            <Checkbox
+              tintColors={{ true: '#ff6900', false: 'grey' }}
+              value={checkAll || checkedItems[item.path]}
+              onValueChange={() => { handleCheck(item.path); }}
+            />
+          }
         </View>
       </TouchableOpacity>
     )
@@ -216,15 +213,16 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
   return (
     <View style={styles.addItem}>
       <ScrollView
-        horizontal style={styles.head}
+        horizontal
+        style={styles.head}
         contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
       >
         {showCurDir()}
       </ScrollView>
       <View style={styles.body}>
         <FlatList
-          ListHeaderComponent={selectMultiple ? headerItem : null}
-          stickyHeaderIndices={selectMultiple ? [0] : []}
+          ListHeaderComponent={selectPath ? null : headerItem}
+          stickyHeaderIndices={selectPath ? [] : [0]}
           keyExtractor={getKeyFromItem}
           data={curItems}
           renderItem={renderItem}
@@ -232,7 +230,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectMultiple, selectDire
       </View>
       <View style={styles.foot}>
         <TextButton title='Exit' onPress={() => { setShowExplorer(false); }} />
-        <TextButton title={selectMultiple ? 'Add' : 'Set'} onPress={addAndExit} />
+        <TextButton title={selectPath ? 'Set' : 'Add'} onPress={addAndExit} />
       </View>
     </View>
   );
