@@ -104,16 +104,14 @@ const App = () => {
     }
   }, []);
 
-  useEffect(() => {
-    AsyncStorage.setItem('myId', myId).catch((err) => {
-      console.log(err);
-    })
+  useEffect(async () => {
+    if (myId)
+      await AsyncStorage.setItem('myId', myId);
   }, [myId]);
 
-  useEffect(() => {
-    AsyncStorage.setItem('downloadPath', downloadPath).catch((err) => {
-      console.log(err);
-    })
+  useEffect(async () => {
+    if (downloadPath)
+      await AsyncStorage.setItem('downloadPath', downloadPath);
   }, [downloadPath]);
 
   return (
@@ -194,8 +192,7 @@ const App = () => {
         setShowExplorer={setShowAddItem}
         items={items}
         setItems={setItems}
-        selectMultiple={true}
-        selectDirectoryOnly={false}
+        selectPath={false}
       />}
     </View>
   );

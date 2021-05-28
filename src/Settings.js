@@ -48,7 +48,6 @@ const Settings = ({ close, myId, setMyId, downloadpath, setDownloadPath }) => {
             defaultValue={myId}
             onChangeText={setTmpMyId}
           />
-
         </View>
       </View>
       <View style={styles.foot}>
@@ -59,8 +58,7 @@ const Settings = ({ close, myId, setMyId, downloadpath, setDownloadPath }) => {
         setShowExplorer={setShowSetPath}
         items={null}
         setItems={setTmpDownloadPath}
-        selectMultiple={false}
-        selectDirectoryOnly={true}
+        selectPath={true}
       />}
     </View>
   )
