@@ -171,6 +171,7 @@ class Receiver {
           haveParsedHeader = true;
           try {
             recvHeader = JSON.parse(ret.header);
+            console.log('class', recvHeader.class);
             recvBuf = ret.buf;
           } catch (err) {
             console.error('Header parsing error. Not JSON format.');
@@ -242,8 +243,9 @@ class Receiver {
                 if (recvBuf.length === recvHeader.size) {
                   // One whole chunk received.
                   // Write chunk on disk.
+                  console.log('buf len', recvBuf.length);
                   try {
-                    await fs.write(this._itemPath, recvBuf.toString('base64'), -1, 'base64');
+                    await fs.appendFile(this._itemPath, recvBuf.toString('base64'), 'base64');
                   } catch (err) {
                     // Appending to file error.
                     // In this error, there is nothing SendDone can do about it.
@@ -269,6 +271,10 @@ class Receiver {
               case 'new':
                 if (this._state === STATE.SENDER_STOP)
                   this._state = STATE.RECV;
+                if (this._itemOpen) {
+                  ++this._numRecvItem;
+                  this._itemOpen = false;
+                }
                 this._itemName = Path.join(recvHeader.dir, recvHeader.name);
                 if (recvHeader.type === 'directory') {
                   try {
@@ -296,12 +302,11 @@ class Receiver {
                 }
                 else if (recvHeader.type === 'file') {
                   try {
-                    this._numRecvItem++;
                     this._itemPath = Path.join(this._downloadPath, this._itemName);
-                    console.log(this._itemPath);
-                    if (await fs.exists(this._itemPath)) {
+                    if ((await fs.exists(this._itemPath))) {
                       // File already exists.
                       // TODO Implement.
+                      this._numRecvItem++;
                       this._itemOpen = false;
                       haveParsedHeader = false;
                       this._itemFlag = 'next';
@@ -309,10 +314,9 @@ class Receiver {
                       return;
                     }
                     this._itemOpen = true;
-                    await fs.write(this._itemPath, '', 0, 'base64');
-                    console.log('after write');
+                    await fs.writeFile(this._itemPath, '', 'base64');
                   } catch (err) {
-                    console.log(err);
+                    console.log('writeFile', err);
                     this._itemFlag = 'next';
                     this._writeOnRecvSocket();
                     return;
@@ -327,8 +331,8 @@ class Receiver {
                 break;
               case 'done':
                 this._state = STATE.RECV_DONE;
+                this._recvSocket.end();
                 this._recvSocket = null;
-                socket.end();
                 break;
               case 'stop':
                 this._state = STATE.SENDER_STOP;

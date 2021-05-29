@@ -3,10 +3,7 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
-  Alert
 } from 'react-native';
-import { stat } from 'react-native-fs';
 import RowButton from './RowButton';
 import { STATE } from './Network';
 
@@ -31,6 +28,91 @@ const RecvView = ({ close, state, endRecv, rejectRecv, acceptRecv }) => {
         </View>
       </View>
     )
+  if (state.state === STATE.RECV) {
+    let speed = parseFloat(state.speed);
+    if (speed > 1048576)
+      speed = (speed / 1048576).toFixed(2).toString() + ' MB/S'
+    else if (speed > 1024)
+      speed = (speed / 1024).toFixed(2).toString() + ' KB/S'
+    else
+      speed = speed.toFixed(2).toString() + ' B/S'
+    return (
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Receiving...</Text>
+        </View>
+        <View style={styles.body}>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{state.name}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{speed}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{state.progress}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>Total Progress: {state.totalProgress}</Text>
+          </View>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='Cancel' onPress={endRecv} />
+        </View>
+      </View>
+    )
+  }
+  if (state.state === STATE.RECV_DONE)
+    return (
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Receive Done!</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={close} />
+        </View>
+      </View>
+    )
+  if (state.state === STATE.ERR_NET)
+    return (
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Network Error. Cannot receive.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={close} />
+        </View>
+      </View>
+    )
+  if (state.state === STATE.ERR_FS)
+    return (
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>File system Error. Cannot receive.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={close} />
+        </View>
+      </View>
+    )
+  if (state.state === STATE.SENDER_END)
+    return (
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Sender has terminated receiving.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={close} />
+        </View>
+      </View>
+    )
   return (
     <View style={styles.recvView} >
       <View style={styles.head}>
@@ -48,9 +130,9 @@ const styles = StyleSheet.create({
   recvView: {
     position: 'absolute',
     width: '90%',
-    height: '80%',
+    height: '60%',
     alignSelf: 'center',
-    top: '5%',
+    top: '20%',
     backgroundColor: '#ffffff',
     overflow: 'hidden',
     flex: 1,
@@ -70,14 +152,15 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   body: {
-    flex: 9,
+    flex: 6,
     padding: 10,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   item: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'flex-start'
+    alignItems: 'center'
   },
   itemName: {
     fontSize: 20,

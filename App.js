@@ -104,6 +104,17 @@ const App = () => {
   }
   const rejectRecv = () => {
     receiver.rejectRecv();
+    closeRecvView();
+  }
+
+  const endRecv = () => {
+    receiver.end();
+    receiver.setStateIdle();
+    closeRecvView();
+  }
+
+  const closeRecvView = () => {
+    receiver.setStateIdle();
     setShowBlind(false);
     setReceiving(false);
   }
@@ -253,9 +264,11 @@ const App = () => {
         selectPath={false}
       />}
       { receiving && <RecvView
+        close={closeRecvView}
         state={recvState}
         rejectRecv={rejectRecv}
         acceptRecv={acceptRecv}
+        endRecv={endRecv}
       />}
     </View>
   );
