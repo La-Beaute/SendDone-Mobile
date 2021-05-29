@@ -1,13 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-function SendView({ setShowBlind, setSending, state, endSend }) {
+function SendView({ setShowBlind, setSending, state, endSend, setReceiverIdle }) {
 
   const endSend = () => {
-
     setSending(false);
     setShowBlind(false);
-    window.ipcRenderer.invoke('setReceiverIdle');
+    setReceiverIdle();
   }
 
   if (state.state === STATE.SEND) {

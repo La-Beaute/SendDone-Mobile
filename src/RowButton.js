@@ -5,9 +5,9 @@ import {
   StyleSheet
 } from 'react-native';
 
-const RowButton = ({ onPress, title }) => {
+const RowButton = ({ onPress, title, propStyle }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
+    <TouchableOpacity onPress={onPress} style={propStyle ? propStyle : styles.button}>
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   )
@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
   text: {
     color: '#111',
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 20,
+    textAlign: 'center',
   }
 })
 

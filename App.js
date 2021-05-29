@@ -15,7 +15,9 @@ import Settings from './src/Settings';
 import ItemView from './src/ItemView';
 import Blind from './src/Blind';
 import TextButton from './src/TextButton';
+import RowButton from './src/RowButton';
 import Explorer from './src/Explorer';
+import RecvView from './src/RecvView';
 import * as Network from './src/Network';
 import Sender from './src/Sender';
 import Receiver from './src/Receiver';
@@ -46,16 +48,14 @@ const askPermissionAndroid = async () => {
 
 let sender = null;
 let receiver = new Receiver();
-// receiver.openServerSocket('192.168.1.183');
-// receiver.changeMyId('12345');
 
 const App = () => {
   const [showScan, setShowScan] = useState(false);
   const [showBlind, setShowBlind] = useState(false);
   const [showAddItem, setShowAddItem] = useState(false);
-  const [showSetPath, setShowSetPath] = useState(false);
+  const [serverSocketOpen, setServerSocketOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [networks, setNetworks] = useState(Network.getMyNetworks());
+  const [networks, setNetworks] = useState([]);
   const [myIp, setMyIp] = useState('');
   const [myId, setMyId] = useState('');
   const [downloadPath, setDownloadPath] = useState('');
@@ -64,6 +64,10 @@ const App = () => {
   const [sendId, setSendId] = useState('');
   const [items, setItems] = useState({});
   const [checkedItems, setCheckedItems] = useState({});
+  const [sending, setSending] = useState(false);
+  const [receiving, setReceiving] = useState(false);
+  const [sendState, setSendState] = useState({});
+  const [recvState, setRecvState] = useState({});
 
   const listNetworks = networks.map((value) => {
     return (
@@ -86,6 +90,24 @@ const App = () => {
     setCheckedItems({});
   }
 
+  const getRecvState = () => {
+    const state = receiver.getState();
+    if (state.state === Network.STATE.RECV_WAIT) {
+      setShowBlind(true);
+      setReceiving(true);
+    }
+    setRecvState(state);
+  }
+
+  const acceptRecv = () => {
+    receiver.acceptRecv(downloadPath);
+  }
+  const rejectRecv = () => {
+    receiver.rejectRecv();
+    setShowBlind(false);
+    setReceiving(false);
+  }
+
   useEffect(async () => {
     const granted = await askPermissionAndroid();
     try {
@@ -102,11 +124,32 @@ const App = () => {
     if (!granted) {
       BackHandler.exitApp();
     }
+
+    let networks = Network.getMyNetworks();
+    setNetworks(networks);
+    if (networks.length > 0) {
+      setMyIp(networks[0].ip);
+      setNetmask(networks[0].netmask);
+    }
+
+    const receiverHandle = setInterval(() => {
+      let isOpen = receiver.isOpen();
+      setServerSocketOpen(isOpen);
+      if (isOpen)
+        // Get receiver state only when the server socket is open.
+        getRecvState();
+    }, 500);
+
+    return () => {
+      clearInterval(receiverHandle);
+    }
   }, []);
 
   useEffect(async () => {
-    if (myId)
+    if (myId) {
+      receiver.changeMyId(myId);
       await AsyncStorage.setItem('myId', myId);
+    }
   }, [myId]);
 
   useEffect(async () => {
@@ -150,25 +193,40 @@ const App = () => {
           <TextButton title='- Checked' onPress={deleteCheckedItems} />
           <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
         </View>
-      </View>
-      <View style={styles.foot}>
         <Text style={styles.sampleText}>
           {sendIp ?
             `You have selected ${sendId}(${sendIp})` :
             'Select device by scanning.'
           }
         </Text>
-        <View style={styles.buttons}>
-          <TextButton title='scan'
+      </View>
+      <View style={styles.foot}>
+        <RowButton title='scan'
+          onPress={() => {
+            setShowBlind(true);
+            setShowScan(true);
+          }}
+        />
+        {serverSocketOpen
+          ?
+          <RowButton title='Close Server'
+            propStyle={styles.buttonActive}
             onPress={() => {
-              setShowBlind(true);
-              setShowScan(true);
+              receiver.closeServerSocket();
             }}
           />
-          <TextButton title='send'
-            onPress={() => { sender = new Sender(myIp); sender.send(items, '192.168.1.214'); }}
+          :
+          <RowButton title='Open Server'
+            propStyle={styles.buttonNotActive}
+            onPress={() => {
+              if (myIp)
+                receiver.openServerSocket(myIp);
+            }}
           />
-        </View>
+        }
+        <RowButton title='send'
+          onPress={() => { sender = new Sender(myIp); sender.send(items, '192.168.1.214'); }}
+        />
       </View>
       { showBlind && <Blind />}
       { showScan && <Scan
@@ -194,6 +252,11 @@ const App = () => {
         setItems={setItems}
         selectPath={false}
       />}
+      { receiving && <RecvView
+        state={recvState}
+        rejectRecv={rejectRecv}
+        acceptRecv={acceptRecv}
+      />}
     </View>
   );
 };
@@ -210,12 +273,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   body: {
-    flex: 7,
+    flex: 8,
     padding: 10,
   },
   foot: {
-    flex: 2,
-    padding: 10,
+    flex: 1,
+    flexDirection: 'row',
   },
   appTitle: {
     fontSize: 30,
@@ -250,13 +313,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    width: 40,
-    height: 40,
+    height: 35,
+    aspectRatio: 1
   },
   settingsImage: {
     alignSelf: 'center',
     width: '100%',
     height: '100%'
+  },
+  buttonActive: {
+    backgroundColor: '#1e1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    flex: 1
+  },
+  buttonNotActive: {
+    backgroundColor: '#e11',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    flex: 1
   }
 });
 

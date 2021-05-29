@@ -89,7 +89,7 @@ const Explorer = ({ setShowExplorer, items, setItems, selectPath }) => {
   const handleCheck = (path) => {
     const value = !(path in checkedItems);
     if (value) {
-      if (selectPath) {
+      if (!selectPath) {
         setCheckedItems(() => {
           const tmp = { ...checkedItems };
           tmp[path] = true;

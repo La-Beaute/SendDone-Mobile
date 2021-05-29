@@ -132,8 +132,6 @@ class Receiver {
         console.log('Server is already on and listening!');
         return;
       }
-      // this._serverSocket is not null but not listening. close it first.
-      this._serverSocket.close();
     }
     this._serverSocket = net.createServer();
 
@@ -300,7 +298,8 @@ class Receiver {
                   try {
                     this._numRecvItem++;
                     this._itemPath = Path.join(this._downloadPath, this._itemName);
-                    if (fs.exists(this._itemPath)) {
+                    console.log(this._itemPath);
+                    if (await fs.exists(this._itemPath)) {
                       // File already exists.
                       // TODO Implement.
                       this._itemOpen = false;
@@ -311,7 +310,9 @@ class Receiver {
                     }
                     this._itemOpen = true;
                     await fs.write(this._itemPath, '', 0, 'base64');
+                    console.log('after write');
                   } catch (err) {
+                    console.log(err);
                     this._itemFlag = 'next';
                     this._writeOnRecvSocket();
                     return;
@@ -368,7 +369,9 @@ class Receiver {
    */
   closeServerSocket() {
     if (this._serverSocket) {
-      this._serverSocket.close(() => { this._serverSocket = null; });
+      console.log(this._serverSocket.listening);
+      this._serverSocket.close();
+      this._serverSocket = null;
     }
   }
 
