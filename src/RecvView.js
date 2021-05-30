@@ -49,7 +49,7 @@ const RecvView = ({ close, state, endRecv, rejectRecv, acceptRecv }) => {
             <Text style={styles.itemName}>{speed}</Text>
           </View>
           <View style={styles.item}>
-            <Text style={styles.itemName}>{state.progress}</Text>
+            <Text style={styles.itemName}>{state.progress}%</Text>
           </View>
           <View style={styles.item}>
             <Text style={styles.itemName}>Total Progress: {state.totalProgress}</Text>
@@ -104,7 +104,7 @@ const RecvView = ({ close, state, endRecv, rejectRecv, acceptRecv }) => {
     return (
       <View style={styles.recvView} >
         <View style={styles.head}>
-          <Text style={styles.headText}>Sender has terminated receiving.</Text>
+          <Text style={styles.headText}>Sender has terminated.</Text>
         </View>
         <View style={styles.body}>
         </View>
@@ -130,9 +130,9 @@ const styles = StyleSheet.create({
   recvView: {
     position: 'absolute',
     width: '90%',
-    height: '60%',
+    height: '70%',
     alignSelf: 'center',
-    top: '20%',
+    top: '15%',
     backgroundColor: '#ffffff',
     overflow: 'hidden',
     flex: 1,

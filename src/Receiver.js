@@ -153,16 +153,18 @@ class Receiver {
       /**
        * @type {Buffer}
        */
-      let recvBuf = new Buffer.from([]);
+      let recvBuf = Buffer.from([]);
+      let bufArray = [];
+      let bufArrayLen = 0;
       let recvHeader = null;
       let haveParsedHeader = false;
       console.log('Receiver: connection from ' + socket.remoteAddress + ':' + socket.remotePort);
 
       socket.on('data', async (data) => {
         let ret = null;
-        recvBuf = Buffer.concat([recvBuf, data]);
         if (!haveParsedHeader) {
           // Try to parse header and save into header.
+          recvBuf = Buffer.concat([recvBuf, data]);
           ret = _splitHeader(recvBuf);
           if (!ret) {
             // The header is still splitted. Wait for more data by return.
@@ -231,6 +233,7 @@ class Receiver {
             }
           case STATE.RECV:
           case STATE.SENDER_STOP:
+            // Append the data to the end of array.
             if (!this._isRecvSocket(socket)) {
               // Destroy this malicious socket.
               socket.destroy();
@@ -240,12 +243,28 @@ class Receiver {
               case 'ok':
                 if (this._state === STATE.SENDER_STOP)
                   this._state = STATE.RECV;
-                if (recvBuf.length === recvHeader.size) {
+                if (bufArray.length === 0) {
+                  console.log('buf empty');
+                  bufArray = [ret.buf];
+                  bufArrayLen = ret.buf.length;
+                }
+                else {
+                  bufArray.push(data);
+                  bufArrayLen += data.length;
+                }
+                if (bufArrayLen === recvHeader.size) {
                   // One whole chunk received.
                   // Write chunk on disk.
-                  console.log('buf len', recvBuf.length);
                   try {
+                    recvBuf = Buffer.concat(bufArray);
+                    bufArrayLen = 0;
+                    bufArray = [];
+                    let time = Date.now();
+                    recvBuf = recvBuf.toString('base64');
+                    console.log('to bas64', Date.now() - time);
+                    time = Date.now();
                     await fs.appendFile(this._itemPath, recvBuf.toString('base64'), 'base64');
+                    console.log('write', Date.now() - time);
                   } catch (err) {
                     // Appending to file error.
                     // In this error, there is nothing SendDone can do about it.

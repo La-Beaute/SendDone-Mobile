@@ -204,9 +204,9 @@ const App = () => {
           <TextButton title='- Checked' onPress={deleteCheckedItems} />
           <TextButton title='+ Items' onPress={() => { setShowAddItem(true); }} />
         </View>
-        <Text style={styles.sampleText}>
+        <Text style={styles.sampleText} numberOfLines={1} ellipsizeMode='tail'>
           {sendIp ?
-            `You have selected ${sendId}(${sendIp})` :
+            `${sendId}(${sendIp})` :
             'Select device by scanning.'
           }
         </Text>
