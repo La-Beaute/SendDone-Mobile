@@ -20,7 +20,9 @@ import Explorer from './src/Explorer';
 import RecvView from './src/RecvView';
 import * as Network from './src/Network';
 import Sender from './src/Sender';
+import { STATE } from './src/Network';
 import Receiver from './src/Receiver';
+import SendView from './src/SendView';
 
 const askPermissionAndroid = async () => {
   try {
@@ -45,7 +47,9 @@ const askPermissionAndroid = async () => {
     return true;
   }
 }
-
+/**
+ * @type {Sender}
+ */
 let sender = null;
 let receiver = new Receiver();
 
@@ -68,6 +72,7 @@ const App = () => {
   const [receiving, setReceiving] = useState(false);
   const [sendState, setSendState] = useState({});
   const [recvState, setRecvState] = useState({});
+  const [deviceList, setDeviceList] = useState([]);
 
   const listNetworks = networks.map((value) => {
     return (
@@ -119,21 +124,60 @@ const App = () => {
     setReceiving(false);
   }
 
+  const getSendState = () => {
+    if (sender) {
+      const state = sender.getState();
+      if (state.state === STATE.SEND_REQUEST || state.state === STATE.SEND)
+        // Only set timeout when needed.
+        setTimeout(getSendState, 500);
+      setSendState(state);
+    }
+  }
+
+  const endSend = () => {
+    if (sender) {
+      sender.end();
+      sender = null;
+    }
+    receiver.setStateIdle();
+  }
+
+  const closeSendView = () => {
+    setShowBlind(false);
+    setSending(false);
+  }
+
+  /**
+   * Initial useEffect.
+   */
   useEffect(async () => {
+    let shouldShowSettings = false;
     const granted = await askPermissionAndroid();
+    if (!granted) {
+      BackHandler.exitApp();
+    }
+
     try {
       let tmp = await AsyncStorage.getItem('downloadPath');
       if (tmp)
         setDownloadPath(tmp);
+      else
+        shouldShowSettings = true;
       tmp = await AsyncStorage.getItem('myId');
       if (tmp)
         setMyId(tmp);
+      else
+        shouldShowSettings = true;
     } catch (err) {
       // Do nothing.
       console.log('getItem error', err);
     }
-    if (!granted) {
-      BackHandler.exitApp();
+    // Show settings if ID or download path is not available.
+    if (shouldShowSettings) {
+      console.log(myId);
+      console.log(downloadPath);
+      setShowBlind(true);
+      setShowSettings(true);
     }
 
     let networks = Network.getMyNetworks();
@@ -236,12 +280,21 @@ const App = () => {
           />
         }
         <RowButton title='send'
-          onPress={() => { sender = new Sender(myIp); sender.send(items, '192.168.1.214'); }}
+          onPress={() => {
+            if (sendIp) {
+              sender = new Sender(myId);
+              sender.send(items, sendIp);
+              setShowBlind(true);
+              setSending(true);
+              getSendState();
+            }
+          }}
         />
       </View>
       { showBlind && <Blind />}
       { showScan && <Scan
         myIp={myIp}
+        myId={myId}
         netmask={netmask}
         setShowBlind={setShowBlind}
         setShowScan={setShowScan}
@@ -249,6 +302,8 @@ const App = () => {
         sendIp={sendIp}
         setSendIp={setSendIp}
         setSendId={setSendId}
+        deviceList={deviceList}
+        setDeviceList={setDeviceList}
       />}
       { showSettings && <Settings
         close={() => { setShowSettings(false); setShowBlind(false); }}
@@ -269,6 +324,11 @@ const App = () => {
         rejectRecv={rejectRecv}
         acceptRecv={acceptRecv}
         endRecv={endRecv}
+      />}
+      { sending && <SendView
+        close={closeSendView}
+        state={sendState}
+        endSend={endSend}
       />}
     </View>
   );

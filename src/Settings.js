@@ -47,6 +47,7 @@ const Settings = ({ close, myId, setMyId, downloadpath, setDownloadPath }) => {
             style={styles.itemBody}
             defaultValue={myId}
             onChangeText={setTmpMyId}
+            maxLength={10}
           />
         </View>
       </View>

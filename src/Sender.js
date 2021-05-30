@@ -338,12 +338,18 @@ class Sender {
       return { state: this._state };
     }
     if (this._state === STATE.SEND) {
+      let itemName = '';
+      try {
+        itemName = this._itemArray[this._index].name;
+      } catch {
+        itemName = '';
+      }
       return {
         state: this._state,
         speed: this.getSpeed(),
         progress: this.getItemProgress(),
         totalProgress: this.getTotalProgress(),
-        name: this._itemArray[this._index].name
+        name: itemName
       };
     }
     return { state: this._state };
