@@ -119,8 +119,15 @@ const App = () => {
     setReceiving(false);
   }
 
+  /**
+   * Initial useEffect.
+   */
   useEffect(async () => {
     const granted = await askPermissionAndroid();
+    if (!granted) {
+      BackHandler.exitApp();
+    }
+
     try {
       let tmp = await AsyncStorage.getItem('downloadPath');
       if (tmp)
@@ -132,8 +139,10 @@ const App = () => {
       // Do nothing.
       console.log('getItem error', err);
     }
-    if (!granted) {
-      BackHandler.exitApp();
+    // Show settings if ID or download path is not available.
+    if (!(myId && downloadPath)) {
+      setShowBlind(true);
+      setShowSettings(true);
     }
 
     let networks = Network.getMyNetworks();
