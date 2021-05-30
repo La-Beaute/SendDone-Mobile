@@ -1,6 +1,7 @@
-const fs = require('fs').promises;
+import * as fs from 'react-native-fs';
+import Path from './Path';
 const net = require('net');
-const path = require('path');
+const Buffer = require('buffer/').Buffer;
 const { PORT, STATE, VERSION, HEADER_END, OS, _splitHeader, } = require('./Network');
 
 class Receiver {
@@ -45,9 +46,9 @@ class Receiver {
     this._endFlag = false;
     /**
     * File handle for receiving.
-    * @type {fs.FileHandle}
+    * @type {boolean}
     */
-    this._itemHandle = null;
+    this._itemOpen = false;
     /**
      * Array of items. Each item is composed of name, dir, type, and size.
      * Size can be omitted if directory.
@@ -59,6 +60,11 @@ class Receiver {
      * @type {String}
      */
     this._itemName = null;
+    /**
+     * Absolute Path of the current item excluding download path.
+     * @type {String}
+     */
+    this._itemPath = null;
     /**
      * Size of the current item.
      * @type {number}
@@ -126,8 +132,6 @@ class Receiver {
         console.log('Server is already on and listening!');
         return;
       }
-      // this._serverSocket is not null but not listening. close it first.
-      this._serverSocket.close();
     }
     this._serverSocket = net.createServer();
 
@@ -149,16 +153,18 @@ class Receiver {
       /**
        * @type {Buffer}
        */
-      let recvBuf = new Buffer.from([]);
+      let recvBuf = Buffer.from([]);
+      let bufArray = [];
+      let bufArrayLen = 0;
       let recvHeader = null;
       let haveParsedHeader = false;
       console.log('Receiver: connection from ' + socket.remoteAddress + ':' + socket.remotePort);
 
       socket.on('data', async (data) => {
         let ret = null;
-        recvBuf = Buffer.concat([recvBuf, data]);
         if (!haveParsedHeader) {
           // Try to parse header and save into header.
+          recvBuf = Buffer.concat([recvBuf, data]);
           ret = _splitHeader(recvBuf);
           if (!ret) {
             // The header is still splitted. Wait for more data by return.
@@ -167,6 +173,7 @@ class Receiver {
           haveParsedHeader = true;
           try {
             recvHeader = JSON.parse(ret.header);
+            console.log('class', recvHeader.class);
             recvBuf = ret.buf;
           } catch (err) {
             console.error('Header parsing error. Not JSON format.');
@@ -226,6 +233,7 @@ class Receiver {
             }
           case STATE.RECV:
           case STATE.SENDER_STOP:
+            // Append the data to the end of array.
             if (!this._isRecvSocket(socket)) {
               // Destroy this malicious socket.
               socket.destroy();
@@ -235,11 +243,28 @@ class Receiver {
               case 'ok':
                 if (this._state === STATE.SENDER_STOP)
                   this._state = STATE.RECV;
-                if (recvBuf.length === recvHeader.size) {
+                if (bufArray.length === 0) {
+                  console.log('buf empty');
+                  bufArray = [ret.buf];
+                  bufArrayLen = ret.buf.length;
+                }
+                else {
+                  bufArray.push(data);
+                  bufArrayLen += data.length;
+                }
+                if (bufArrayLen === recvHeader.size) {
                   // One whole chunk received.
                   // Write chunk on disk.
                   try {
-                    await this._itemHandle.appendFile(recvBuf);
+                    recvBuf = Buffer.concat(bufArray);
+                    bufArrayLen = 0;
+                    bufArray = [];
+                    let time = Date.now();
+                    recvBuf = recvBuf.toString('base64');
+                    console.log('to bas64', Date.now() - time);
+                    time = Date.now();
+                    await fs.appendFile(this._itemPath, recvBuf.toString('base64'), 'base64');
+                    console.log('write', Date.now() - time);
                   } catch (err) {
                     // Appending to file error.
                     // In this error, there is nothing SendDone can do about it.
@@ -247,10 +272,8 @@ class Receiver {
                     // mark it failed, and go to next item.
                     // TODO mark the item failed.
                     try {
-                      await this._itemHandle.close();
-                      await fs.rm(path.join(this._downloadPath, this._itemName), { force: true });
+                      await fs.unlink(this._itemPath);
                     } finally {
-                      this._itemHandle = null;
                       this._itemFlag = 'next';
                       this._writeOnRecvSocket();
                       return;
@@ -267,10 +290,15 @@ class Receiver {
               case 'new':
                 if (this._state === STATE.SENDER_STOP)
                   this._state = STATE.RECV;
-                this._itemName = path.join(recvHeader.dir, recvHeader.name);
+                if (this._itemOpen) {
+                  ++this._numRecvItem;
+                  this._itemOpen = false;
+                }
+                this._itemName = Path.join(recvHeader.dir, recvHeader.name);
                 if (recvHeader.type === 'directory') {
                   try {
-                    await fs.mkdir(path.join(this._downloadPath, this._itemName));
+                    this._itemOpen = false;
+                    await fs.mkdir(this._itemPath);
                   } catch (err) {
                     if (err.code === 'EEXIST') {
                       this._itemFlag = 'ok';
@@ -293,17 +321,21 @@ class Receiver {
                 }
                 else if (recvHeader.type === 'file') {
                   try {
-                    if (this._itemHandle) {
+                    this._itemPath = Path.join(this._downloadPath, this._itemName);
+                    if ((await fs.exists(this._itemPath))) {
+                      // File already exists.
+                      // TODO Implement.
                       this._numRecvItem++;
-                      // Close previous item handle.
-                      await this._itemHandle.close();
+                      this._itemOpen = false;
+                      haveParsedHeader = false;
+                      this._itemFlag = 'next';
+                      this._writeOnRecvSocket();
+                      return;
                     }
-                    this._itemHandle = await fs.open(path.join(this._downloadPath, this._itemName), 'wx');
+                    this._itemOpen = true;
+                    await fs.writeFile(this._itemPath, '', 'base64');
                   } catch (err) {
-                    // File already exists.
-                    // TODO Implement.
-                    this._itemHandle = null;
-                    haveParsedHeader = false;
+                    console.log('writeFile', err);
                     this._itemFlag = 'next';
                     this._writeOnRecvSocket();
                     return;
@@ -317,13 +349,9 @@ class Receiver {
                 }
                 break;
               case 'done':
-                if (this._itemHandle) {
-                  // Close previous item handle.
-                  await this._itemHandle.close();
-                }
                 this._state = STATE.RECV_DONE;
+                this._recvSocket.end();
                 this._recvSocket = null;
-                socket.end();
                 break;
               case 'stop':
                 this._state = STATE.SENDER_STOP;
@@ -356,7 +384,7 @@ class Receiver {
       });
     });
 
-    this._serverSocket.listen(PORT, ip);
+    this._serverSocket.listen({ port: PORT, host: ip, reuseAddress: true });
   }
 
   /**
@@ -364,7 +392,9 @@ class Receiver {
    */
   closeServerSocket() {
     if (this._serverSocket) {
-      this._serverSocket.close(() => { this._serverSocket = null; });
+      console.log(this._serverSocket.listening);
+      this._serverSocket.close();
+      this._serverSocket = null;
     }
   }
 
@@ -492,10 +522,9 @@ class Receiver {
    */
   async end() {
     if (this._state === STATE.RECV || this._state === STATE.SENDER_STOP || this._state === STATE.RECEIVER_STOP) {
-      if (this._itemHandle) {
+      if (this._itemOpen) {
         // Delete currently receiving file.
-        await this._itemHandle.close();
-        await fs.rm(path.join(this._downloadPath, this._itemName), { force: true });
+        await fs.unlink(this._itemPath);
       }
       this._endFlag = true;
       if (this._state === STATE.SENDER_STOP || this._state === STATE.RECEIVER_STOP) {
@@ -536,7 +565,7 @@ class Receiver {
     this._state = STATE.IDLE;
     const header = { class: 'no' };
     this._recvSocket.write(JSON.stringify(header) + HEADER_END, 'utf-8', this._onWriteRecvError);
-    this._recvSocket = null;
+    this._recvSocket.end();
     return true;
   }
 
@@ -613,5 +642,4 @@ class Receiver {
   }
 }
 
-
-module.exports = { Receiver };
+export default Receiver;
