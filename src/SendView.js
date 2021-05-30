@@ -1,12 +1,16 @@
 import React from 'react';
-import { View } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native';
+import RowButton from './RowButton';
+import { STATE } from './Network';
 
-function SendView({ setShowBlind, setSending, state, endSend, setReceiverIdle }) {
-
-  const endSend = () => {
-    setSending(false);
-    setShowBlind(false);
-    setReceiverIdle();
+const SendView = ({ close, state, endSend }) => {
+  const closeAndExit = () => {
+    endSend();
+    close();
   }
 
   if (state.state === STATE.SEND) {
@@ -18,96 +22,166 @@ function SendView({ setShowBlind, setSending, state, endSend, setReceiverIdle })
     else
       speed = speed.toFixed(2).toString() + ' B/S'
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          <div className='ItemName'>
-            {state.name}
-          </div>
-          <div>
-            {state.progress}%
-          </div>
-          <div className="ProgressBar">
-            <div className="insideBar" style={{ width: `${state.progress}%` }}></div>
-          </div>
-          <div>
-            Send Speed : {speed}
-          </div>
-          <div>
-            Total Progress : {state.totalProgress}
-          </div>
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">Cancel</button>
-        </div>
-      </div>
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Sending...</Text>
+        </View>
+        <View style={styles.body}>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{state.name}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{speed}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>{state.progress}%</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemName}>Total Progress: {state.totalProgress}</Text>
+          </View>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='Cancel' onPress={closeAndExit} />
+        </View>
+      </View>
     )
   }
   if (state.state === STATE.SEND_REJECT)
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          Receiver has rejected your request.
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">OK</button>
-        </div>
-      </div>
-    );
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Send Fail</Text>
+        </View>
+        <View style={styles.body}>
+          <Text style={styles.itemName}>Receiver has rejected your request.</Text>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={closeAndExit} />
+        </View>
+      </View>
+    )
   if (state.state === STATE.SEND_DONE)
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          Send Done!
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">OK</button>
-        </div>
-      </div>
-    );
-
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Send done!</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={closeAndExit} />
+        </View>
+      </View>
+    )
   if (state.state === STATE.ERR_NET)
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          Network Error. Cannot send.
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">OK</button>
-        </div>
-      </div>
-    );
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Sender has terminated.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={closeAndExit} />
+        </View>
+      </View>
+    )
   if (state.state === STATE.ERR_FS)
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          File System Error. Cannot send.
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">OK</button>
-        </div>
-      </div>
-    );
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>File system Error. Cannot send.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={closeAndExit} />
+        </View>
+      </View>
+    )
   if (state.state === STATE.RECEIVER_END)
     return (
-      <div className="SendView">
-        <div className="SendView-Body">
-          Receiver has terminated receiving.
-        </div>
-        <div className="SendView-Buttons">
-          <button onClick={endSend} className="TextButton">OK</button>
-        </div>
-      </div>
-    );
+      <View style={styles.recvView} >
+        <View style={styles.head}>
+          <Text style={styles.headText}>Receiver has terminated.</Text>
+        </View>
+        <View style={styles.body}>
+        </View>
+        <View style={styles.foot}>
+          <RowButton title='OK' onPress={closeAndExit} />
+        </View>
+      </View>
+    )
   return (
-    <div className="SendView">
-      <div className="SendView-Body">
-        Waiting...
-        </div>
-      <div className="SendView-Buttons">
-        <button onClick={endSend} className="TextButton">Cancel</button>
-      </div>
-    </div>
-  );
+    <View style={styles.recvView} >
+      <View style={styles.head}>
+        <Text style={styles.headText}>Waiting...</Text>
+      </View>
+      <View style={styles.body}>
+      </View>
+      <View style={styles.foot}>
+        <RowButton title='Cancel' onPress={closeAndExit} />
+      </View>
+    </View>
+  )
 }
+
+const styles = StyleSheet.create({
+  recvView: {
+    position: 'absolute',
+    width: '90%',
+    height: '70%',
+    alignSelf: 'center',
+    top: '15%',
+    backgroundColor: '#ffffff',
+    overflow: 'hidden',
+    flex: 1,
+    borderRadius: 20
+  },
+  head: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomColor: 'grey',
+    borderStyle: 'solid',
+    borderBottomWidth: 2
+  },
+  headText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  body: {
+    flex: 6,
+    padding: 10,
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  item: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  itemName: {
+    fontSize: 20,
+    color: 'black'
+  },
+  itemBody: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    color: '#000',
+    paddingVertical: 5,
+    paddingHorizontal: 10
+  },
+  foot: {
+    flex: 1,
+    flexDirection: 'row',
+    width: '100%'
+  },
+  button: {
+    flex: 1
+  }
+});
 
 export default SendView;
