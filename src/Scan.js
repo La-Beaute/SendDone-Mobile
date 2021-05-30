@@ -3,14 +3,14 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   TouchableOpacity,
   FlatList
 } from 'react-native';
+import RowButton from './RowButton';
 
-const Scan = ({ myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp, setSendId }) => {
-  const [deviceList, setDeviceList] = useState([]);
+let isFirst = true;;
 
+const Scan = ({ myIp, myId, netmask, setShowBlind, setShowScan, scan, sendIp, setSendIp, setSendId, deviceList, setDeviceList }) => {
   const renderDevice = ({ item }) => {
     return (
       <TouchableOpacity
@@ -33,26 +33,34 @@ const Scan = ({ myIp, netmask, setShowBlind, setShowScan, scan, sendIp, setSendI
       </TouchableOpacity>
     );
   }
-  useEffect(() => {
-    // TODO Add my device ID.
-    setDeviceList(() => []);
-    scan(myIp, netmask, '123', (deviceIp, deviceVersion, deviceId, deviceOs) => {
-      setDeviceList(() =>
-        [...deviceList, { ip: deviceIp, version: deviceVersion, id: deviceId, os: deviceOs }]);
-    });
-  }, []);
+
   return (
     <View style={styles.scan}>
-      <FlatList
-        data={deviceList}
-        renderItem={renderDevice}
-        keyExtractor={(item, index) => item.ip}
-      >
-      </FlatList>
-      <Button title='Close' onPress={() => {
-        setShowScan(false);
-        setShowBlind(false);
-      }} />
+      <View style={styles.body}>
+        <FlatList
+          data={deviceList}
+          renderItem={renderDevice}
+          keyExtractor={(item, index) => item.ip}
+        />
+      </View>
+      <View style={styles.buttons}>
+        <RowButton title='Scan' onPress={() => {
+          isFirst = true;
+          scan(myIp, netmask, myId, (deviceIp, deviceVersion, deviceId, deviceOs) => {
+            setDeviceList(() => {
+              if (isFirst) {
+                isFirst = false;
+                return [{ ip: deviceIp, version: deviceVersion, id: deviceId, os: deviceOs }];
+              }
+              return [...deviceList, { ip: deviceIp, version: deviceVersion, id: deviceId, os: deviceOs }];
+            });
+          });
+        }} />
+        <RowButton title='Close' onPress={() => {
+          setShowScan(false);
+          setShowBlind(false);
+        }} />
+      </View>
     </View>
   );
 };
@@ -65,17 +73,18 @@ const styles = StyleSheet.create({
     height: '90%',
     alignSelf: 'center',
     top: '5%',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    overflow: 'hidden',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  body: {
+    flex: 9
   },
   buttons: {
-    width: 100,
-    height: 10,
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderRadius: 5,
-    borderStyle: 'solid'
+    width: '100%',
   },
   device: {
     width: '100%',
@@ -83,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     padding: 10,
-    borderWidth: 2,
+    borderBottomWidth: 1,
     borderStyle: 'solid',
     backgroundColor: '#ffffff'
   },
@@ -93,9 +102,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     padding: 10,
-    borderWidth: 2,
+    borderBottomWidth: 1,
     borderStyle: 'solid',
-    backgroundColor: '#afafaf'
+    backgroundColor: '#ccc'
   },
   deviceOs: {
     width: '20%',

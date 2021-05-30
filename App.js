@@ -72,6 +72,7 @@ const App = () => {
   const [receiving, setReceiving] = useState(false);
   const [sendState, setSendState] = useState({});
   const [recvState, setRecvState] = useState({});
+  const [deviceList, setDeviceList] = useState([]);
 
   const listNetworks = networks.map((value) => {
     return (
@@ -293,6 +294,7 @@ const App = () => {
       { showBlind && <Blind />}
       { showScan && <Scan
         myIp={myIp}
+        myId={myId}
         netmask={netmask}
         setShowBlind={setShowBlind}
         setShowScan={setShowScan}
@@ -300,6 +302,8 @@ const App = () => {
         sendIp={sendIp}
         setSendIp={setSendIp}
         setSendId={setSendId}
+        deviceList={deviceList}
+        setDeviceList={setDeviceList}
       />}
       { showSettings && <Settings
         close={() => { setShowSettings(false); setShowBlind(false); }}
